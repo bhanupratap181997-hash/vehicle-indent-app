@@ -1,51 +1,276 @@
+
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#123c35"><meta name="description" content="Personal Vehicle Indent Management app with cloud sync and monthly dashboard"><link rel="manifest" href="manifest.json"><title>Vehicle Indent Manager</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#123c35">
+<meta name="description" content="Personal Vehicle Indent Management App">
+<link rel="manifest" href="manifest.json">
+<title>Vehicle Indent Manager</title>
 <style>
-:root{--green:#123c35;--green2:#1b6355;--bg:#f3f6f5;--card:#fff;--text:#152522;--muted:#6a7a76;--line:#e0e8e5;--orange:#b76b08;--red:#b93838;--blue:#2868a8}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}header{background:linear-gradient(135deg,var(--green),var(--green2));color:white;padding:22px max(16px,calc((100% - 1120px)/2));padding-bottom:25px}header .top{display:flex;align-items:center;justify-content:space-between;gap:12px}h1{font-size:23px;margin:0}header p{margin:7px 0 0;color:#d5e8e3;font-size:13px}.wrap{max-width:1120px;margin:0 auto;padding:16px}.hidden{display:none!important}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 3px 12px #123c3508;margin-bottom:14px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.metric{padding:15px}.metric .label{font-size:12px;color:var(--muted)}.metric .value{font-size:27px;font-weight:750;margin-top:5px}.metric .hint{font-size:11px;color:var(--muted);margin-top:3px}h2{font-size:17px;margin:0 0 13px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}label{font-size:12px;font-weight:650;color:#4b5e59;display:block;margin-bottom:5px}input,select,textarea{width:100%;padding:11px 12px;border:1px solid #d6e0dc;border-radius:10px;background:#fff;color:var(--text);font:inherit;font-size:14px;outline-color:var(--green2)}textarea{min-height:72px;resize:vertical}.formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.field.full{grid-column:1/-1}button{border:0;border-radius:10px;padding:10px 14px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.primary{background:var(--green);color:#fff}.secondary{background:#e8f1ee;color:var(--green)}.danger{background:#fdecec;color:var(--red)}.small{padding:7px 9px;font-size:12px}.muted{color:var(--muted);font-size:12px}.status{display:inline-block;border-radius:99px;padding:5px 9px;font-size:11px;font-weight:750;background:#edf1f0;color:#50605c}.s-Pending{background:#fff1d9;color:#925500}.s-Placed{background:#e5f0ff;color:#1e5d9d}.s-Received{background:#e0f5e9;color:#17663d}.s-Cancelled{background:#fde7e7;color:#a52a2a}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:790px;font-size:13px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;background:#fbfcfc}.actions{display:flex;gap:5px;flex-wrap:wrap}.locationrow{display:grid;grid-template-columns:minmax(100px,1fr) 2fr 36px;gap:10px;align-items:center;margin:10px 0;font-size:12px}.bar{height:9px;border-radius:99px;background:#e8efec;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,#1b6355,#5cae93);border-radius:99px}.auth{max-width:430px;margin:30px auto}.notice{padding:11px 13px;border-radius:10px;background:#fff5dc;color:#78510c;font-size:12px;margin:12px 0}.good{background:#e4f6ec;color:#17663d}.error{background:#fde7e7;color:#9c2626}.tabs{display:flex;gap:8px;margin-bottom:14px}.tab{background:#e7eeeb;color:#48615a}.tab.active{background:var(--green);color:#fff}.month{max-width:170px}.empty{text-align:center;padding:26px;color:var(--muted)}footer{text-align:center;padding:22px;color:var(--muted);font-size:11px}
-@media(max-width:700px){.wrap{padding:12px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.metric .value{font-size:24px}.formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.field.full{grid-column:1/-1}header{padding:18px 15px 22px}h1{font-size:21px}.card{padding:13px}.auth{margin:20px auto}.locationrow{grid-template-columns:90px 1fr 28px}}
-</style></head>
+:root{--g:#123c35;--g2:#1b6355;--bg:#f3f6f5;--line:#e0e8e5;--muted:#6a7a76}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#152522;font-family:system-ui,Arial,sans-serif}
+header{background:linear-gradient(135deg,var(--g),var(--g2));color:white;padding:20px 16px}
+header p{margin:6px 0 0;color:#d5e8e3;font-size:13px}
+h1{font-size:22px;margin:0}h2{font-size:17px;margin:0 0 13px}
+.wrap{max-width:1120px;margin:auto;padding:14px}
+.card{background:white;border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:13px}
+.hidden{display:none!important}.muted{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
+label{display:block;font-size:12px;font-weight:650;margin:8px 0 5px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #d6e0dc;border-radius:9px;background:white;font:inherit;font-size:14px}
+textarea{min-height:65px}
+button{border:0;border-radius:9px;padding:10px 13px;font-weight:700;cursor:pointer}
+.primary{background:var(--g);color:white}.secondary{background:#e8f1ee;color:var(--g)}
+.danger{background:#fdecec;color:#b93838}.small{padding:6px 8px;font-size:12px}
+.auth{max-width:430px;margin:25px auto}
+.notice{padding:11px;background:#fff3d8;color:#78510c;border-radius:9px;margin:10px 0;font-size:12px;overflow-wrap:anywhere}
+.error{background:#fde7e7;color:#9c2626}.good{background:#e4f6ec;color:#17663d}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.metric .value{font-size:26px;font-weight:750;margin-top:6px}
+.metric .label{font-size:11px;color:var(--muted)}
+.formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.full{grid-column:1/-1}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tab{background:#e7eeeb;color:#48615a}.tab.active{background:var(--g);color:white}
+.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:760px;font-size:12px}
+th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:10px;color:var(--muted)}
+.status{padding:4px 7px;border-radius:20px;font-size:11px;background:#edf1f0}
+.s-Pending{background:#fff1d9;color:#925500}.s-Placed{background:#e5f0ff;color:#1e5d9d}
+.s-Received{background:#e0f5e9;color:#17663d}.s-Cancelled{background:#fde7e7;color:#a52a2a}
+.actions{display:flex;gap:4px;flex-wrap:wrap}
+.locationrow{display:grid;grid-template-columns:90px 1fr 25px;gap:8px;align-items:center;margin:9px 0;font-size:12px}
+.bar{height:8px;background:#e8efec;border-radius:10px;overflow:hidden}
+.bar span{display:block;height:100%;background:#1b6355}
+.empty{text-align:center;padding:20px;color:var(--muted)}
+footer{text-align:center;padding:20px;color:var(--muted);font-size:11px}
+@media(max-width:650px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.card{padding:12px}.wrap{padding:10px}.metric .value{font-size:23px}}
+</style>
+</head>
 <body>
-<header><div class="top"><div><h1>🚚 Vehicle Indent Manager</h1><p>Personal workspace · Cloud-synced records & monthly dashboard</p></div><button id="logoutBtn" class="secondary hidden">Log out</button></div></header>
+<header>
+  <div class="row between">
+    <div><h1>🚚 Vehicle Indent Manager</h1><p>Personal workspace · Cloud records & dashboard</p></div>
+    <button id="logoutBtn" class="secondary hidden">Log out</button>
+  </div>
+</header>
 <main class="wrap">
-<section id="authView" class="card auth"><h2>Sign in to your vehicle records</h2><p class="muted">Use the same account on a new phone to access your cloud data.</p><div class="field" style="margin:12px 0"><label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></div><div class="field" style="margin:12px 0"><label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="At least 6 characters"></div><div class="row"><button class="primary" id="loginBtn">Sign in</button><button class="secondary" id="registerBtn">Create account</button></div><div id="authMsg" class="notice hidden"></div><p class="muted" style="margin-top:14px">Account password is for this app's Firebase login. Never share it.</p></section>
-<section id="appView" class="hidden">
-<div id="message" class="notice hidden"></div>
-<div class="row between" style="margin:8px 0 12px"><div><h2 style="margin-bottom:3px">Monthly dashboard</h2><div class="muted">Vehicle placements by month and location</div></div><input class="month" id="monthFilter" type="month"></div>
-<div class="grid"><div class="card metric"><div class="label">TOTAL INDENTS</div><div class="value" id="mTotal">0</div><div class="hint">Selected month</div></div><div class="card metric"><div class="label">VEHICLES PLACED</div><div class="value" id="mPlaced">0</div><div class="hint">Placed during selected month</div></div><div class="card metric"><div class="label">RECEIVED</div><div class="value" id="mReceived">0</div><div class="hint">Current status, month filtered</div></div><div class="card metric"><div class="label">CANCELLED</div><div class="value" id="mCancelled">0</div><div class="hint">Current status, month filtered</div></div></div>
-<div class="card"><div class="row between"><h2>Location-wise placements</h2><span class="muted" id="locationTotal">0 locations</span></div><div id="locationChart"><div class="empty">No placements for this month yet.</div></div></div>
-<div class="tabs"><button class="tab active" data-tab="records">All indents</button><button class="tab" data-tab="new">+ New indent</button></div>
-<section id="recordsPanel" class="card"><div class="row between"><h2>Indent records</h2><input id="search" style="max-width:240px" placeholder="Search location, vehicle…"></div><div class="tablewrap"><table><thead><tr><th>Indent date</th><th>Location / Plant</th><th>Transporter</th><th>Vehicle</th><th>Required date</th><th>Qty MT</th><th>Status</th><th>Actions</th></tr></thead><tbody id="recordsBody"></tbody></table></div><div id="recordsEmpty" class="empty hidden">No indents yet. Create your first indent.</div></section>
-<section id="newPanel" class="card hidden"><div class="row between"><h2 id="formTitle">Create vehicle indent</h2><span class="muted">Required date has no time field</span></div><form id="indentForm"><input id="editId" type="hidden"><div class="formgrid"><div class="field"><label>Indent date *</label><input id="indentDate" type="date" required></div><div class="field"><label>Plant / Location *</label><input id="location" required placeholder="e.g. Alwar"></div><div class="field"><label>Transporter name</label><input id="transporter" placeholder="Transporter"></div><div class="field"><label>Vehicle type</label><select id="vehicleType"><option value="">Select type</option><option>Truck</option><option>Trailer</option><option>Container</option><option>Tanker</option><option>Other</option></select></div><div class="field"><label>Vehicle number</label><input id="vehicleNumber" placeholder="e.g. RJ02 XX 1234"></div><div class="field"><label>Required date *</label><input id="requiredDate" type="date" required></div><div class="field"><label>Quantity (MT)</label><input id="quantity" type="number" min="0" step="0.01" placeholder="0.00"></div><div class="field"><label>Initial status</label><select id="status"><option>Pending</option><option>Placed</option><option>Received</option><option>Cancelled</option></select></div><div class="field full"><label>Remarks / cancellation reason</label><textarea id="remarks" placeholder="Optional notes"></textarea></div></div><div class="row" style="margin-top:14px"><button class="primary" type="submit" id="saveBtn">Save indent</button><button class="secondary" type="button" id="cancelEditBtn">Clear</button></div></form></section>
-<div class="card"><h2>Status history</h2><p class="muted">Select “History” on any record to see status changes and their timestamps.</p><div id="historyArea" class="muted">No record selected.</div></div>
+<section id="authView" class="card auth">
+  <h2>Sign in to your vehicle records</h2>
+  <p class="muted">Use the same account on a new phone to access your cloud data.</p>
+  <label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com">
+  <label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="App password">
+  <div class="row" style="margin-top:12px">
+    <button class="primary" id="loginBtn">Sign in</button>
+    <button class="secondary" id="registerBtn">Create account</button>
+  </div>
+  <div id="authMsg" class="notice hidden"></div>
+  <p class="muted">This password is for Firebase app login. Never share it.</p>
 </section>
-</main><footer>Vehicle Indent Manager · Keep your Firebase login secure.</footer>
+
+<section id="appView" class="hidden">
+  <div id="message" class="notice hidden"></div>
+  <div class="row between" style="margin:8px 0 12px">
+    <div><h2 style="margin:0">Monthly dashboard</h2><span class="muted">Placements by month and location</span></div>
+    <input id="monthFilter" type="month" style="max-width:165px">
+  </div>
+  <div class="grid">
+    <div class="card metric"><div class="label">TOTAL INDENTS</div><div class="value" id="mTotal">0</div></div>
+    <div class="card metric"><div class="label">VEHICLES PLACED</div><div class="value" id="mPlaced">0</div></div>
+    <div class="card metric"><div class="label">RECEIVED</div><div class="value" id="mReceived">0</div></div>
+    <div class="card metric"><div class="label">CANCELLED</div><div class="value" id="mCancelled">0</div></div>
+  </div>
+  <div class="card"><h2>Location-wise placements</h2><div id="locationChart" class="empty">No placements yet.</div></div>
+  <div class="tabs">
+    <button class="tab active" data-tab="records">All indents</button>
+    <button class="tab" data-tab="new">+ New indent</button>
+  </div>
+  <section id="recordsPanel" class="card">
+    <div class="row between"><h2>Indent records</h2><input id="search" placeholder="Search records" style="max-width:190px"></div>
+    <div class="tablewrap"><table><thead><tr>
+      <th>Indent date</th><th>Location</th><th>Transporter</th><th>Vehicle</th><th>Required date</th><th>MT</th><th>Status</th><th>Actions</th>
+    </tr></thead><tbody id="recordsBody"></tbody></table></div>
+    <div id="recordsEmpty" class="empty hidden">No indents yet.</div>
+  </section>
+  <section id="newPanel" class="card hidden">
+    <h2 id="formTitle">Create vehicle indent</h2>
+    <form id="indentForm">
+      <input id="editId" type="hidden">
+      <div class="formgrid">
+        <div><label>Indent date *</label><input id="indentDate" type="date" required></div>
+        <div><label>Plant / Location *</label><input id="location" required placeholder="e.g. Alwar"></div>
+        <div><label>Transporter name</label><input id="transporter" placeholder="Transporter"></div>
+        <div><label>Vehicle type</label><select id="vehicleType"><option value="">Select type</option><option>Truck</option><option>Trailer</option><option>Container</option><option>Tanker</option><option>Other</option></select></div>
+        <div><label>Vehicle number</label><input id="vehicleNumber" placeholder="RJ02 XX 1234"></div>
+        <div><label>Required date *</label><input id="requiredDate" type="date" required></div>
+        <div><label>Quantity (MT)</label><input id="quantity" type="number" min="0" step="0.01"></div>
+        <div><label>Initial status</label><select id="status"><option>Pending</option><option>Placed</option><option>Received</option><option>Cancelled</option></select></div>
+        <div class="full"><label>Remarks / cancellation reason</label><textarea id="remarks"></textarea></div>
+      </div>
+      <div class="row" style="margin-top:13px"><button class="primary" type="submit" id="saveBtn">Save indent</button><button class="secondary" type="button" id="cancelEditBtn">Clear</button></div>
+    </form>
+  </section>
+  <div class="card"><h2>Status history</h2><div id="historyArea" class="muted">Select History on a record.</div></div>
+</section>
+</main>
+<footer>Vehicle Indent Manager · Keep your Firebase login secure.</footer>
+
 <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-// Paste your Firebase web app config here (Firebase Console > Project settings > Your apps > SDK setup).
-const firebaseConfig = { apiKey: "PASTE_API_KEY", authDomain: "PASTE_PROJECT_ID.firebaseapp.com", projectId: "PASTE_PROJECT_ID", storageBucket: "PASTE_PROJECT_ID.appspot.com", messagingSenderId: "PASTE_SENDER_ID", appId: "PASTE_APP_ID" };
-const configured = !Object.values(firebaseConfig).some(v => String(v).startsWith('PASTE_'));
-let app,auth,db,user=null,records=[];const $=id=>document.getElementById(id);const today=()=>new Date().toLocaleDateString('en-CA');
-$('monthFilter').value=new Date().toISOString().slice(0,7);$('indentDate').value=today();$('requiredDate').value=today();
-function showMsg(txt,kind=''){const el=$('message');el.textContent=txt;el.className='notice '+kind;el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),6500)}function authMsg(txt,kind=''){const el=$('authMsg');el.textContent=txt;el.className='notice '+kind;el.classList.remove('hidden')}
-if(configured){app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);onAuthStateChanged(auth,async u=>{user=u;$('authView').classList.toggle('hidden',!!u);$('appView').classList.toggle('hidden',!u);$('logoutBtn').classList.toggle('hidden',!u);if(u)await loadRecords()})}else{authMsg('Setup needed: add your Firebase web app config to index.html before using the app. See README.txt.');$('loginBtn').disabled=true;$('registerBtn').disabled=true}
-$('loginBtn').onclick=async()=>{try{await signInWithEmailAndPassword(auth,$('authEmail').value.trim(),$('authPassword').value)}catch(e){authMsg(friendly(e), 'error')}};
-$('registerBtn').onclick=async()=>{try{await createUserWithEmailAndPassword(auth,$('authEmail').value.trim(),$('authPassword').value);authMsg('Account created. You are signed in.', 'good')}catch(e){authMsg(friendly(e),'error')}};
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {getFirestore,collection,addDoc,getDocs,doc,updateDoc,query,where,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCY-ixYqis-9p_AtbAdPSzFE6SCQmmYEN4",
+  authDomain: "vehicle-indent-placement.firebaseapp.com",
+  projectId: "vehicle-indent-placement",
+  storageBucket: "vehicle-indent-placement.firebasestorage.app",
+  messagingSenderId: "732813340242",
+  appId: "1:732813340242:web:e58cb2825378992b73b98b",
+  measurementId: "G-0S5TZS0DMQ"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const $=id=>document.getElementById(id);
+let user=null,records=[];
+const today=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)};
+$('monthFilter').value=today().slice(0,7);
+$('indentDate').value=today();
+$('requiredDate').value=today();
+
+function authMsg(t,k=''){const e=$('authMsg');e.textContent=t;e.className='notice '+k}
+function showMsg(t,k=''){const e=$('message');e.textContent=t;e.className='notice '+k}
+function friendly(e){
+ const map={
+ 'auth/invalid-email':'Enter a valid email address.',
+ 'auth/weak-password':'Password must be at least 6 characters.',
+ 'auth/email-already-in-use':'This email already has an account. Sign in instead.',
+ 'auth/invalid-credential':'Email or password is incorrect.',
+ 'auth/unauthorized-domain':'Add your GitHub Pages domain in Firebase Authentication > Settings > Authorized domains.',
+ 'auth/too-many-requests':'Too many attempts. Try again later.'
+ };
+ return map[e.code]||e.message||'Something went wrong.';
+}
+$('loginBtn').onclick=async()=>{
+ try{await signInWithEmailAndPassword(auth,$('authEmail').value.trim(),$('authPassword').value);authMsg('')}
+ catch(e){authMsg(friendly(e),'error')}
+};
+$('registerBtn').onclick=async()=>{
+ try{await createUserWithEmailAndPassword(auth,$('authEmail').value.trim(),$('authPassword').value);authMsg('Account created.','good')}
+ catch(e){authMsg(friendly(e),'error')}
+};
 $('logoutBtn').onclick=()=>signOut(auth);
-function friendly(e){return ({'auth/invalid-email':'Enter a valid email address.','auth/weak-password':'Password must be at least 6 characters.','auth/email-already-in-use':'This email already has an account. Sign in instead.','auth/invalid-credential':'Email or password is incorrect.','auth/too-many-requests':'Too many attempts. Try again later.'})[e.code]||e.message||'Something went wrong.'}
-async function loadRecords(){try{const q=query(collection(db,'indents'),where('ownerUid','==',user.uid));const snap=await getDocs(q);records=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(b.indentDate||'').localeCompare(String(a.indentDate||'')));render()}catch(e){showMsg('Could not load records: '+e.message,'error')}}
-function monthOf(r){return (r.indentDate||'').slice(0,7)}function render(){const m=$('monthFilter').value;const monthRows=records.filter(r=>monthOf(r)===m);$('mTotal').textContent=monthRows.length;$('mPlaced').textContent=records.filter(r=>(r.placedAt||'').slice(0,7)===m).length;$('mReceived').textContent=monthRows.filter(r=>r.status==='Received').length;$('mCancelled').textContent=monthRows.filter(r=>r.status==='Cancelled').length;
-const loc={};records.filter(r=>(r.placedAt||'').slice(0,7)===m).forEach(r=>{const k=r.location||'Not specified';loc[k]=(loc[k]||0)+1});const sorted=Object.entries(loc).sort((a,b)=>b[1]-a[1]);$('locationTotal').textContent=sorted.length+' location'+(sorted.length===1?'':'s');const max=Math.max(1,...sorted.map(x=>x[1]));$('locationChart').innerHTML=sorted.length?sorted.map(([name,n])=>`<div class="locationrow"><strong>${esc(name)}</strong><div class="bar"><span style="width:${n/max*100}%"></span></div><strong>${n}</strong></div>`).join(''):'<div class="empty">No placements for this month yet.</div>';
-const search=$('search').value.toLowerCase();const rows=records.filter(r=>[r.location,r.transporter,r.vehicleNumber,r.status].join(' ').toLowerCase().includes(search));$('recordsBody').innerHTML=rows.map(r=>`<tr><td>${esc(r.indentDate||'—')}</td><td><strong>${esc(r.location||'—')}</strong></td><td>${esc(r.transporter||'—')}</td><td>${esc(r.vehicleNumber||'—')}<br><span class="muted">${esc(r.vehicleType||'')}</span></td><td>${esc(r.requiredDate||'—')}</td><td>${esc(r.quantity??'—')}</td><td><span class="status s-${esc(r.status||'Pending')}">${esc(r.status||'Pending')}</span></td><td><div class="actions"><select aria-label="Change status" class="small statusSelect" data-id="${r.id}" style="max-width:115px;padding:6px"><option ${r.status==='Pending'?'selected':''}>Pending</option><option ${r.status==='Placed'?'selected':''}>Placed</option><option ${r.status==='Received'?'selected':''}>Received</option><option ${r.status==='Cancelled'?'selected':''}>Cancelled</option></select><button class="secondary small editBtn" data-id="${r.id}">Edit</button><button class="secondary small historyBtn" data-id="${r.id}">History</button></div></td></tr>`).join('');$('recordsEmpty').classList.toggle('hidden',rows.length>0);document.querySelectorAll('.statusSelect').forEach(el=>el.onchange=()=>changeStatus(el.dataset.id,el.value));document.querySelectorAll('.editBtn').forEach(el=>el.onclick=()=>editRecord(el.dataset.id));document.querySelectorAll('.historyBtn').forEach(el=>el.onclick=()=>showHistory(el.dataset.id));}
+onAuthStateChanged(auth,async u=>{
+ user=u;
+ $('authView').classList.toggle('hidden',!!u);
+ $('appView').classList.toggle('hidden',!u);
+ $('logoutBtn').classList.toggle('hidden',!u);
+ if(u)await loadRecords();
+});
+
+async function loadRecords(){
+ try{
+  const q=query(collection(db,'indents'),where('ownerUid','==',user.uid));
+  const snap=await getDocs(q);
+  records=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(b.indentDate||'').localeCompare(String(a.indentDate||'')));
+  render();
+ }catch(e){showMsg('Could not load records: '+e.message,'error')}
+}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function changeStatus(id,status){const r=records.find(x=>x.id===id);if(!r)return;const old=r.status||'Pending';if(status==='Cancelled'&&!r.remarks&&!confirm('Cancel this vehicle indent? You can add a cancellation reason using Edit.')){render();return}try{const hist=[...(r.history||[]),{from:old,to:status,at:new Date().toISOString()}];const update={status,history:hist,updatedAt:serverTimestamp()};if(status==='Placed'&&!r.placedAt)update.placedAt=today();if(status==='Pending'){}await updateDoc(doc(db,'indents',id),update);showMsg('Status updated to '+status+'.','good');await loadRecords()}catch(e){showMsg('Could not update status: '+e.message,'error')}}
-function editRecord(id){const r=records.find(x=>x.id===id);if(!r)return;$('editId').value=id;for(const k of ['indentDate','location','transporter','vehicleType','vehicleNumber','requiredDate','quantity','status','remarks'])$(k).value=r[k]??'';$('formTitle').textContent='Edit vehicle indent';switchTab('new');window.scrollTo({top:0,behavior:'smooth'})}
-function showHistory(id){const r=records.find(x=>x.id===id);if(!r)return;const h=r.history||[];$('historyArea').innerHTML=`<strong>${esc(r.location||'Indent')} · ${esc(r.vehicleNumber||'No vehicle number')}</strong>`+(h.length?'<ul>'+h.slice().reverse().map(x=>`<li>${esc(x.from)} → <strong>${esc(x.to)}</strong> <span class="muted">${esc(new Date(x.at).toLocaleString())}</span></li>`).join('')+'</ul>':'<p>No status changes recorded yet.</p>');}
-$('indentForm').onsubmit=async ev=>{ev.preventDefault();const id=$('editId').value;const data={ownerUid:user.uid,indentDate:$('indentDate').value,location:$('location').value.trim(),transporter:$('transporter').value.trim(),vehicleType:$('vehicleType').value,vehicleNumber:$('vehicleNumber').value.trim().toUpperCase(),requiredDate:$('requiredDate').value,quantity:$('quantity').value===''?null:Number($('quantity').value),status:$('status').value,remarks:$('remarks').value.trim()};try{if(id){const old=records.find(x=>x.id===id);const history=[...(old.history||[])];if(old.status!==data.status)history.push({from:old.status||'Pending',to:data.status,at:new Date().toISOString()});const update={...data,history,updatedAt:serverTimestamp()};if(data.status==='Placed'&&!old.placedAt)update.placedAt=today();else if(old.placedAt)update.placedAt=old.placedAt;await updateDoc(doc(db,'indents',id),update);showMsg('Indent updated.','good')}else{const now=new Date().toISOString();const history=[{from:'New',to:data.status,at:now}];const item={...data,history,createdAt:serverTimestamp(),placedAt:data.status==='Placed'?today():null};await addDoc(collection(db,'indents'),item);showMsg('Indent saved to cloud.','good')}clearForm();await loadRecords();switchTab('records')}catch(e){showMsg('Could not save: '+e.message,'error')}};
-function clearForm(){ $('indentForm').reset();$('editId').value='';$('indentDate').value=today();$('requiredDate').value=today();$('formTitle').textContent='Create vehicle indent';$('status').value='Pending'}$('cancelEditBtn').onclick=clearForm;
-function switchTab(tab){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));$('recordsPanel').classList.toggle('hidden',tab!=='records');$('newPanel').classList.toggle('hidden',tab!=='new')}document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{if(b.dataset.tab==='new')clearForm();switchTab(b.dataset.tab)});$('monthFilter').onchange=render;$('search').oninput=render;
-if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
-</script></body></html>
+function render(){
+ const m=$('monthFilter').value;
+ const mr=records.filter(r=>(r.indentDate||'').slice(0,7)===m);
+ $('mTotal').textContent=mr.length;
+ $('mPlaced').textContent=records.filter(r=>(r.placedAt||'').slice(0,7)===m).length;
+ $('mReceived').textContent=mr.filter(r=>r.status==='Received').length;
+ $('mCancelled').textContent=mr.filter(r=>r.status==='Cancelled').length;
+ const loc={};
+ records.filter(r=>(r.placedAt||'').slice(0,7)===m).forEach(r=>{const k=r.location||'Not specified';loc[k]=(loc[k]||0)+1});
+ const ls=Object.entries(loc).sort((a,b)=>b[1]-a[1]),max=Math.max(1,...ls.map(x=>x[1]));
+ $('locationChart').className=ls.length?'':'empty';
+ $('locationChart').innerHTML=ls.length?ls.map(([n,v])=>`<div class="locationrow"><strong>${esc(n)}</strong><div class="bar"><span style="width:${v/max*100}%"></span></div><strong>${v}</strong></div>`).join(''):'No placements for this month yet.';
+ const s=$('search').value.toLowerCase();
+ const rows=records.filter(r=>[r.location,r.transporter,r.vehicleNumber,r.status].join(' ').toLowerCase().includes(s));
+ $('recordsBody').innerHTML=rows.map(r=>`<tr>
+ <td>${esc(r.indentDate||'—')}</td><td>${esc(r.location||'—')}</td><td>${esc(r.transporter||'—')}</td>
+ <td>${esc(r.vehicleNumber||'—')}<br>${esc(r.vehicleType||'')}</td><td>${esc(r.requiredDate||'—')}</td>
+ <td>${esc(r.quantity??'—')}</td><td><span class="status s-${esc(r.status||'Pending')}">${esc(r.status||'Pending')}</span></td>
+ <td><div class="actions">
+ <select class="statusSelect" data-id="${r.id}" aria-label="Change status" style="width:105px;padding:5px;font-size:11px">
+ ${['Pending','Placed','Received','Cancelled'].map(x=>`<option ${r.status===x?'selected':''}>${x}</option>`).join('')}
+ </select>
+ <button class="secondary small editBtn" data-id="${r.id}">Edit</button>
+ <button class="secondary small historyBtn" data-id="${r.id}">History</button>
+ </div></td></tr>`).join('');
+ $('recordsEmpty').classList.toggle('hidden',rows.length>0);
+ document.querySelectorAll('.statusSelect').forEach(e=>e.onchange=()=>changeStatus(e.dataset.id,e.value));
+ document.querySelectorAll('.editBtn').forEach(e=>e.onclick=()=>editRecord(e.dataset.id));
+ document.querySelectorAll('.historyBtn').forEach(e=>e.onclick=()=>showHistory(e.dataset.id));
+}
+async function changeStatus(id,status){
+ const r=records.find(x=>x.id===id);if(!r)return;
+ if(status==='Cancelled'&&!confirm('Cancel this vehicle indent?')){render();return}
+ try{
+  const history=[...(r.history||[]),{from:r.status||'Pending',to:status,at:new Date().toISOString()}];
+  const update={status,history,updatedAt:serverTimestamp()};
+  if(status==='Placed'&&!r.placedAt)update.placedAt=today();
+  await updateDoc(doc(db,'indents',id),update);
+  showMsg('Status updated.','good');await loadRecords();
+ }catch(e){showMsg('Could not update status: '+e.message,'error')}
+}
+function editRecord(id){
+ const r=records.find(x=>x.id===id);if(!r)return;
+ $('editId').value=id;
+ ['indentDate','location','transporter','vehicleType','vehicleNumber','requiredDate','quantity','status','remarks'].forEach(k=>$(k).value=r[k]??'');
+ $('formTitle').textContent='Edit vehicle indent';switchTab('new');
+}
+function showHistory(id){
+ const r=records.find(x=>x.id===id);if(!r)return;
+ const h=r.history||[];
+ $('historyArea').innerHTML=`<strong>${esc(r.location||'Indent')} · ${esc(r.vehicleNumber||'No vehicle number')}</strong>`+
+ (h.length?'<ul>'+h.slice().reverse().map(x=>`<li>${esc(x.from)} → <strong>${esc(x.to)}</strong> <span class="muted">${esc(new Date(x.at).toLocaleString())}</span></li>`).join('')+'</ul>':'<p>No status changes yet.</p>');
+}
+$('indentForm').onsubmit=async ev=>{
+ ev.preventDefault();
+ const id=$('editId').value;
+ const data={ownerUid:user.uid,indentDate:$('indentDate').value,location:$('location').value.trim(),
+ transporter:$('transporter').value.trim(),vehicleType:$('vehicleType').value,
+ vehicleNumber:$('vehicleNumber').value.trim().toUpperCase(),requiredDate:$('requiredDate').value,
+ quantity:$('quantity').value===''?null:Number($('quantity').value),status:$('status').value,remarks:$('remarks').value.trim()};
+ try{
+  if(id){
+   const old=records.find(x=>x.id===id);
+   const history=[...(old.history||[])];
+   if(old.status!==data.status)history.push({from:old.status||'Pending',to:data.status,at:new Date().toISOString()});
+   const update={...data,history,updatedAt:serverTimestamp()};
+   if(data.status==='Placed'&&!old.placedAt)update.placedAt=today();else if(old.placedAt)update.placedAt=old.placedAt;
+   await updateDoc(doc(db,'indents',id),update);showMsg('Indent updated.','good');
+  }else{
+   const item={...data,history:[{from:'New',to:data.status,at:new Date().toISOString()}],
+    createdAt:serverTimestamp(),placedAt:data.status==='Placed'?today():null};
+   await addDoc(collection(db,'indents'),item);showMsg('Indent saved to cloud.','good');
+  }
+  clearForm();await loadRecords();switchTab('records');
+ }catch(e){showMsg('Could not save: '+e.message,'error')}
+};
+function clearForm(){
+ $('indentForm').reset();$('editId').value='';$('indentDate').value=today();$('requiredDate').value=today();
+ $('formTitle').textContent='Create vehicle indent';$('status').value='Pending';
+}
+$('cancelEditBtn').onclick=clearForm;
+function switchTab(t){
+ document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+ $('recordsPanel').classList.toggle('hidden',t!=='records');
+ $('newPanel').classList.toggle('hidden',t!=='new');
+}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{if(b.dataset.tab==='new')clearForm();switchTab(b.dataset.tab)});
+$('monthFilter').onchange=render;
+$('search').oninput=render;
+</script>
+</body>
+</html>
