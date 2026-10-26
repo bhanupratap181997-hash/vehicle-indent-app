@@ -67,7 +67,7 @@ th,td{text-align:left;padding:9px;border-bottom:1px solid #e2e9e5}
 <section id="records" class="card">
 <h3>Indent Records</h3>
 <input id="search" placeholder="Search location, transporter, vehicle">
-<p class="small">Select records for one transporter to create an email draft.</p>
+<p class="small">Select records for one transporter to create a Gmail draft.</p>
 <div class="wrap">
 <table>
 <thead><tr>
@@ -78,8 +78,7 @@ th,td{text-align:left;padding:9px;border-bottom:1px solid #e2e9e5}
 <tbody id="rows"></tbody>
 </table>
 </div>
-<button class="primary" id="mail">Create Email Draft</button>
-<button id="copyTable" class="hidden">Copy Formatted Table</button>
+<button class="primary" id="mail">Create Gmail Draft</button>
 <div id="history" class="small"></div>
 </section>
 
@@ -109,7 +108,7 @@ th,td{text-align:left;padding:9px;border-bottom:1px solid #e2e9e5}
 
 <section id="master" class="card hidden">
 <h3>Transporter Master</h3>
-<p class="small">Each transporter can have multiple To email IDs. CC IDs are shared for your account.</p>
+<p class="small">Transporter-specific To IDs and common CC IDs.</p>
 <label>Transporter Name<input id="tname" placeholder="Transporter name"></label>
 <label>To email IDs<input id="temails" placeholder="email1@company.com, email2@company.com"></label>
 <button class="primary" id="addTransporter">Save Transporter</button>
@@ -154,11 +153,13 @@ appId:"1:732813340242:web:e58cb2825378992b73b98b",
 measurementId:"G-0S5TZS0DMQ"
 };
 
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app),db=getFirestore(app);
+const APPS_SCRIPT_URL =
+'https://script.google.com/macros/s/AKfycbzO1Ofzy5lG7h9bUF0HNetv2ZJMSIyV8nx4BhRjz5q9-dyuN6cr94xEjUFaDX6zZZPd/exec';
+
+const firebaseApp=initializeApp(firebaseConfig);
+const auth=getAuth(firebaseApp),db=getFirestore(firebaseApp);
 const $=id=>document.getElementById(id);
 let user=null,records=[],transporters=[],ccEmails='',selected=new Set();
-let pendingHtml='',pendingPlain='';
 
 function today(){
 const d=new Date();
@@ -411,52 +412,39 @@ chosen.map((r,i)=>`${i+1}. Location: ${r.location||'-'} | Required Date: ${fmtDa
 return {html,plain};
 }
 
-$('mail').onclick=async()=>{
+$('mail').onclick=()=>{
 const chosen=records.filter(r=>selected.has(r.id));
 if(!chosen.length){message('Select at least one record first.',true);return}
 const names=[...new Set(chosen.map(r=>r.transporter).filter(Boolean))];
 if(names.length!==1){message('Select records for one transporter per email.',true);return}
-const t=transporters.find(x=>x.name===names[0]),to=t?.emails||[];
+const t=transporters.find(x=>x.name===names[0]);
+const to=emails((t?.emails||[]).join(', '));
+const cc=emails(ccEmails);
 if(!to.length){message('Add transporter email IDs in Transporter Master first.',true);tab('master');return}
-const {html,plain}=buildEmail(chosen);
-pendingHtml=html;pendingPlain=plain;
-$('copyTable').classList.remove('hidden');
-const subject='Vehicle Indent - '+names[0];
-const url='mailto:'+to.map(encodeURIComponent).join(',')+
-'?cc='+encodeURIComponent(emails(ccEmails).join(','))+
-'&subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(plain);
-try{
-if(navigator.clipboard?.write&&window.ClipboardItem){
-await navigator.clipboard.write([new ClipboardItem({
-'text/html':new Blob([html],{type:'text/html'}),
-'text/plain':new Blob([plain],{type:'text/plain'})
-})]);
-message('Formatted table copied. In Outlook, paste it into the email body.');
-}else{
-message('If automatic copy is unavailable, tap Copy Formatted Table to open the table page.');
-}
-window.location.href=url;
-}catch(e){
-message('Clipboard permission was unavailable. Open the email and use Copy Formatted Table.',true);
-window.location.href=url;
-}
-};
 
-$('copyTable').onclick=async()=>{
-try{
-if(navigator.clipboard?.write&&window.ClipboardItem){
-await navigator.clipboard.write([new ClipboardItem({
-'text/html':new Blob([pendingHtml],{type:'text/html'}),
-'text/plain':new Blob([pendingPlain],{type:'text/plain'})
-})]);
-message('Formatted table copied. Return to Outlook and paste into the email body.');
-}else{
-const w=window.open('','_blank');
-if(!w){message('Pop-up blocked. Allow pop-ups for this site and retry.',true);return}
-w.document.write(`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Email Table</title></head><body>${pendingHtml}<p>Press and hold the table to select and copy it, then paste into Outlook.</p></body></html>`);
-w.document.close();
+const {html,plain}=buildEmail(chosen);
+const subject='Vehicle Indent - '+names[0];
+
+// Opens a new tab and submits the data to the Apps Script web app.
+// This does not send the email; it requests creation of a Gmail draft.
+const form=document.createElement('form');
+form.method='POST';
+form.action=APPS_SCRIPT_URL;
+form.target='_blank';
+form.style.display='none';
+
+const fields={to:to.join(','),cc:cc.join(','),subject,htmlBody:html,plainBody:plain};
+for(const [name,value] of Object.entries(fields)){
+const input=document.createElement('input');
+input.type='hidden';
+input.name=name;
+input.value=value;
+form.appendChild(input);
 }
-}catch(e){message('Could not copy automatically. Try opening the table page and copying it manually.',true)}
+document.body.appendChild(form);
+message('Submitting draft request in a new tab...');
+form.submit();
+form.remove();
 };
 
 $('month').onchange=render;
