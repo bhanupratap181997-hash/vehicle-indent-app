@@ -3,274 +3,440 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#123c35">
-<meta name="description" content="Personal Vehicle Indent Management App">
-<link rel="manifest" href="manifest.json">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Vehicle Indent Manager</title>
 <style>
-:root{--g:#123c35;--g2:#1b6355;--bg:#f3f6f5;--line:#e0e8e5;--muted:#6a7a76}
+:root{--g:#123c35;--bg:#f3f6f5;--line:#dfe8e4}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:#152522;font-family:system-ui,Arial,sans-serif}
-header{background:linear-gradient(135deg,var(--g),var(--g2));color:white;padding:20px 16px}
-header p{margin:6px 0 0;color:#d5e8e3;font-size:13px}
-h1{font-size:22px;margin:0}h2{font-size:17px;margin:0 0 13px}
-.wrap{max-width:1120px;margin:auto;padding:14px}
-.card{background:white;border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:13px}
-.hidden{display:none!important}.muted{font-size:12px;color:var(--muted)}
-.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
-label{display:block;font-size:12px;font-weight:650;margin:8px 0 5px}
-input,select,textarea{width:100%;padding:10px;border:1px solid #d6e0dc;border-radius:9px;background:white;font:inherit;font-size:14px}
-textarea{min-height:65px}
-button{border:0;border-radius:9px;padding:10px 13px;font-weight:700;cursor:pointer}
-.primary{background:var(--g);color:white}.secondary{background:#e8f1ee;color:var(--g)}
-.danger{background:#fdecec;color:#b93838}.small{padding:6px 8px;font-size:12px}
-.auth{max-width:430px;margin:25px auto}
-.notice{padding:11px;background:#fff3d8;color:#78510c;border-radius:9px;margin:10px 0;font-size:12px;overflow-wrap:anywhere}
-.error{background:#fde7e7;color:#9c2626}.good{background:#e4f6ec;color:#17663d}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
-.metric .value{font-size:26px;font-weight:750;margin-top:6px}
-.metric .label{font-size:11px;color:var(--muted)}
-.formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.full{grid-column:1/-1}
-.tabs{display:flex;gap:8px;margin-bottom:12px}
-.tab{background:#e7eeeb;color:#48615a}.tab.active{background:var(--g);color:white}
-.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:760px;font-size:12px}
-th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-size:10px;color:var(--muted)}
-.status{padding:4px 7px;border-radius:20px;font-size:11px;background:#edf1f0}
-.s-Pending{background:#fff1d9;color:#925500}.s-Placed{background:#e5f0ff;color:#1e5d9d}
-.s-Received{background:#e0f5e9;color:#17663d}.s-Cancelled{background:#fde7e7;color:#a52a2a}
-.actions{display:flex;gap:4px;flex-wrap:wrap}
-.locationrow{display:grid;grid-template-columns:90px 1fr 25px;gap:8px;align-items:center;margin:9px 0;font-size:12px}
-.bar{height:8px;background:#e8efec;border-radius:10px;overflow:hidden}
-.bar span{display:block;height:100%;background:#1b6355}
-.empty{text-align:center;padding:20px;color:var(--muted)}
-footer{text-align:center;padding:20px;color:var(--muted);font-size:11px}
-@media(max-width:650px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.card{padding:12px}.wrap{padding:10px}.metric .value{font-size:23px}}
+body{margin:0;background:var(--bg);color:#172923;font:14px Arial,sans-serif}
+header{background:var(--g);color:white;padding:18px}
+main{max-width:1100px;margin:auto;padding:12px}
+.card{background:white;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+input,select,textarea,button{font:inherit;padding:10px;border:1px solid #d2ded8;border-radius:7px;max-width:100%}
+input,select,textarea{width:100%;margin:4px 0 9px}
+button{cursor:pointer;background:#e7f0eb;color:#123c35;font-weight:bold}
+.primary{background:var(--g);color:white}
+.danger{background:#ffe9e9;color:#922}
+.hidden{display:none!important}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+table{border-collapse:collapse;width:100%;min-width:850px}
+th,td{text-align:left;padding:9px;border-bottom:1px solid #e2e9e5}
+.wrap{overflow:auto}
+.small{font-size:12px;color:#64736c}
+#msg{padding:10px;background:#fff1cf;margin:8px 0;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
 <header>
-  <div class="row between">
-    <div><h1>🚚 Vehicle Indent Manager</h1><p>Personal workspace · Cloud records & dashboard</p></div>
-    <button id="logoutBtn" class="secondary hidden">Log out</button>
-  </div>
+  <h2>🚚 Vehicle Indent Manager</h2>
+  <div>Cloud records · Transporter Master · Reports</div>
 </header>
-<main class="wrap">
-<section id="authView" class="card auth">
-  <h2>Sign in to your vehicle records</h2>
-  <p class="muted">Use the same account on a new phone to access your cloud data.</p>
-  <label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com">
-  <label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="App password">
-  <div class="row" style="margin-top:12px">
-    <button class="primary" id="loginBtn">Sign in</button>
-    <button class="secondary" id="registerBtn">Create account</button>
-  </div>
-  <div id="authMsg" class="notice hidden"></div>
-  <p class="muted">This password is for Firebase app login. Never share it.</p>
+
+<main>
+<section id="auth" class="card">
+  <h3>Login / Register</h3>
+  <input id="email" type="email" placeholder="Login email">
+  <input id="password" type="password" placeholder="Password">
+  <button class="primary" id="login">Login</button>
+  <button id="register">Create account</button>
 </section>
 
-<section id="appView" class="hidden">
-  <div id="message" class="notice hidden"></div>
-  <div class="row between" style="margin:8px 0 12px">
-    <div><h2 style="margin:0">Monthly dashboard</h2><span class="muted">Placements by month and location</span></div>
-    <input id="monthFilter" type="month" style="max-width:165px">
+<section id="app" class="hidden">
+  <div id="msg" class="hidden"></div>
+  <button id="logout">Log out</button>
+
+  <div class="card">
+    <h3>Monthly Dashboard</h3>
+    <input id="month" type="month">
+    <div class="grid">
+      <div>Total indents: <b id="total">0</b></div>
+      <div>Placed: <b id="placed">0</b></div>
+      <div>Received: <b id="received">0</b></div>
+      <div>Cancelled: <b id="cancelled">0</b></div>
+    </div>
   </div>
-  <div class="grid">
-    <div class="card metric"><div class="label">TOTAL INDENTS</div><div class="value" id="mTotal">0</div></div>
-    <div class="card metric"><div class="label">VEHICLES PLACED</div><div class="value" id="mPlaced">0</div></div>
-    <div class="card metric"><div class="label">RECEIVED</div><div class="value" id="mReceived">0</div></div>
-    <div class="card metric"><div class="label">CANCELLED</div><div class="value" id="mCancelled">0</div></div>
-  </div>
-  <div class="card"><h2>Location-wise placements</h2><div id="locationChart" class="empty">No placements yet.</div></div>
+
   <div class="tabs">
-    <button class="tab active" data-tab="records">All indents</button>
-    <button class="tab" data-tab="new">+ New indent</button>
+    <button data-tab="records">All Records</button>
+    <button data-tab="new">New Indent</button>
+    <button data-tab="master">Transporter Master</button>
+    <button data-tab="report">Excel Report</button>
   </div>
-  <section id="recordsPanel" class="card">
-    <div class="row between"><h2>Indent records</h2><input id="search" placeholder="Search records" style="max-width:190px"></div>
-    <div class="tablewrap"><table><thead><tr>
-      <th>Indent date</th><th>Location</th><th>Transporter</th><th>Vehicle</th><th>Required date</th><th>MT</th><th>Status</th><th>Actions</th>
-    </tr></thead><tbody id="recordsBody"></tbody></table></div>
-    <div id="recordsEmpty" class="empty hidden">No indents yet.</div>
+
+  <section id="records" class="card">
+    <h3>Indent Records</h3>
+    <input id="search" placeholder="Search location, transporter, vehicle">
+    <p class="small">Select records for the email draft using the checkbox.</p>
+    <div class="wrap">
+      <table>
+        <thead><tr>
+          <th>Select</th><th>Indent Date</th><th>Location</th>
+          <th>Transporter</th><th>Vehicle</th><th>Required Date</th>
+          <th>MT</th><th>Status</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <button class="primary" id="mail">Create Email Draft</button>
+    <div id="history" class="small"></div>
   </section>
-  <section id="newPanel" class="card hidden">
-    <h2 id="formTitle">Create vehicle indent</h2>
-    <form id="indentForm">
+
+  <section id="new" class="card hidden">
+    <h3 id="formTitle">New Indent</h3>
+    <form id="form">
       <input id="editId" type="hidden">
-      <div class="formgrid">
-        <div><label>Indent date *</label><input id="indentDate" type="date" required></div>
-        <div><label>Plant / Location *</label><input id="location" required placeholder="e.g. Alwar"></div>
-        <div><label>Transporter name</label><input id="transporter" placeholder="Transporter"></div>
-        <div><label>Vehicle type</label><select id="vehicleType"><option value="">Select type</option><option>Truck</option><option>Trailer</option><option>Container</option><option>Tanker</option><option>Other</option></select></div>
-        <div><label>Vehicle number</label><input id="vehicleNumber" placeholder="RJ02 XX 1234"></div>
-        <div><label>Required date *</label><input id="requiredDate" type="date" required></div>
-        <div><label>Quantity (MT)</label><input id="quantity" type="number" min="0" step="0.01"></div>
-        <div><label>Initial status</label><select id="status"><option>Pending</option><option>Placed</option><option>Received</option><option>Cancelled</option></select></div>
-        <div class="full"><label>Remarks / cancellation reason</label><textarea id="remarks"></textarea></div>
+      <div class="grid">
+        <label>Indent Date<input id="indentDate" type="date" required></label>
+        <label>Location<input id="location" required></label>
+        <label>Transporter
+          <select id="transporter"><option value="">Select transporter</option></select>
+        </label>
+        <label>Vehicle Type
+          <select id="vehicleType">
+            <option>Truck</option><option>Trailer</option>
+            <option>Container</option><option>Tanker</option><option>Other</option>
+          </select>
+        </label>
+        <label>Vehicle Number<input id="vehicleNumber"></label>
+        <label>Required Date<input id="requiredDate" type="date" required></label>
+        <label>Quantity MT<input id="quantity" type="number" min="0" step=".01"></label>
+        <label>Status
+          <select id="status">
+            <option>Pending</option><option>Placed</option>
+            <option>Received</option><option>Cancelled</option>
+          </select>
+        </label>
       </div>
-      <div class="row" style="margin-top:13px"><button class="primary" type="submit" id="saveBtn">Save indent</button><button class="secondary" type="button" id="cancelEditBtn">Clear</button></div>
+      <label>Remarks<textarea id="remarks"></textarea></label>
+      <button class="primary" type="submit">Save Indent</button>
+      <button type="button" id="clear">Clear</button>
     </form>
   </section>
-  <div class="card"><h2>Status history</h2><div id="historyArea" class="muted">Select History on a record.</div></div>
+
+  <section id="master" class="card hidden">
+    <h3>Transporter Master</h3>
+    <p class="small">Each transporter can have multiple To email IDs. CC IDs are shared for your account.</p>
+    <label>Transporter Name<input id="tname" placeholder="Transporter name"></label>
+    <label>To email IDs<input id="temails" placeholder="email1@company.com, email2@company.com"></label>
+    <button class="primary" id="addTransporter">Save Transporter</button>
+    <div id="masterList"></div>
+    <hr>
+    <label>Common CC email IDs<textarea id="ccemails" placeholder="cc1@company.com, cc2@company.com"></textarea></label>
+    <button class="primary" id="saveCC">Save CC IDs</button>
+  </section>
+
+  <section id="report" class="card hidden">
+    <h3>Date Range Excel Report</h3>
+    <label>From date<input id="fromDate" type="date"></label>
+    <label>To date<input id="toDate" type="date"></label>
+    <label>Status
+      <select id="reportStatus">
+        <option value="All">All statuses</option>
+        <option>Pending</option><option>Placed</option>
+        <option>Received</option><option>Cancelled</option>
+      </select>
+    </label>
+    <button class="primary" id="export">Download Excel (.xlsx)</button>
+    <p class="small">Date filtering uses the Indent Date. All four statuses are included when All statuses is selected.</p>
+  </section>
 </section>
 </main>
-<footer>Vehicle Indent Manager · Keep your Firebase login secure.</footer>
 
 <script type="module">
-import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import {getFirestore,collection,addDoc,getDocs,doc,updateDoc,query,where,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import {initializeApp}
+ from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {
+ getAuth,onAuthStateChanged,signInWithEmailAndPassword,
+ createUserWithEmailAndPassword,signOut
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {
+ getFirestore,collection,addDoc,getDocs,doc,updateDoc,
+ setDoc,getDoc,serverTimestamp,query,where
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCY-ixYqis-9p_AtbAdPSzFE6SCQmmYEN4",
-  authDomain: "vehicle-indent-placement.firebaseapp.com",
-  projectId: "vehicle-indent-placement",
-  storageBucket: "vehicle-indent-placement.firebasestorage.app",
-  messagingSenderId: "732813340242",
-  appId: "1:732813340242:web:e58cb2825378992b73b98b",
-  measurementId: "G-0S5TZS0DMQ"
+const firebaseConfig={
+ apiKey:"AIzaSyCY-ixYqis-9p_AtbAdPSzFE6SCQmmYEN4",
+ authDomain:"vehicle-indent-placement.firebaseapp.com",
+ projectId:"vehicle-indent-placement",
+ storageBucket:"vehicle-indent-placement.firebasestorage.app",
+ messagingSenderId:"732813340242",
+ appId:"1:732813340242:web:e58cb2825378992b73b98b",
+ measurementId:"G-0S5TZS0DMQ"
 };
 
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 const $=id=>document.getElementById(id);
-let user=null,records=[];
-const today=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)};
-$('monthFilter').value=today().slice(0,7);
+let user=null,records=[],transporters=[],ccEmails='',selected=new Set();
+
+const today=()=>{
+ const d=new Date();
+ d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
+ return d.toISOString().slice(0,10);
+};
+$('month').value=today().slice(0,7);
 $('indentDate').value=today();
 $('requiredDate').value=today();
 
-function authMsg(t,k=''){const e=$('authMsg');e.textContent=t;e.className='notice '+k}
-function showMsg(t,k=''){const e=$('message');e.textContent=t;e.className='notice '+k}
-function friendly(e){
- const map={
- 'auth/invalid-email':'Enter a valid email address.',
- 'auth/weak-password':'Password must be at least 6 characters.',
- 'auth/email-already-in-use':'This email already has an account. Sign in instead.',
- 'auth/invalid-credential':'Email or password is incorrect.',
- 'auth/unauthorized-domain':'Add your GitHub Pages domain in Firebase Authentication > Settings > Authorized domains.',
- 'auth/too-many-requests':'Too many attempts. Try again later.'
- };
- return map[e.code]||e.message||'Something went wrong.';
+function message(s,error=false){
+ $('msg').textContent=s;
+ $('msg').className=error?'':'good';
+ $('msg').style.background=error?'#ffe9e9':'#e5f6eb';
+ $('msg').classList.remove('hidden');
 }
-$('loginBtn').onclick=async()=>{
- try{await signInWithEmailAndPassword(auth,$('authEmail').value.trim(),$('authPassword').value);authMsg('')}
- catch(e){authMsg(friendly(e),'error')}
+function esc(s){
+ return String(s??'').replace(/[&<>"']/g,c=>({
+ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+ }[c]));
+}
+function emails(s){
+ return [...new Set(String(s||'').split(/[;,\s]+/)
+  .map(x=>x.trim()).filter(x=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x)))];
+}
+function tab(id){
+ for(const x of ['records','new','master','report'])
+  $(x).classList.toggle('hidden',x!==id);
+ document.querySelectorAll('[data-tab]').forEach(b=>
+  b.style.background=b.dataset.tab===id?'#123c35':'#e7f0eb');
+}
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+
+$('login').onclick=async()=>{
+ try{await signInWithEmailAndPassword(auth,$('email').value.trim(),$('password').value)}
+ catch(e){message(e.message,true)}
 };
-$('registerBtn').onclick=async()=>{
- try{await createUserWithEmailAndPassword(auth,$('authEmail').value.trim(),$('authPassword').value);authMsg('Account created.','good')}
- catch(e){authMsg(friendly(e),'error')}
+$('register').onclick=async()=>{
+ try{await createUserWithEmailAndPassword(auth,$('email').value.trim(),$('password').value)}
+ catch(e){message(e.message,true)}
 };
-$('logoutBtn').onclick=()=>signOut(auth);
+$('logout').onclick=()=>signOut(auth);
+
 onAuthStateChanged(auth,async u=>{
  user=u;
- $('authView').classList.toggle('hidden',!!u);
- $('appView').classList.toggle('hidden',!u);
- $('logoutBtn').classList.toggle('hidden',!u);
- if(u)await loadRecords();
+ $('auth').classList.toggle('hidden',!!u);
+ $('app').classList.toggle('hidden',!u);
+ if(u){
+  await loadSettings();
+  await loadRecords();
+ }
 });
 
 async function loadRecords(){
  try{
   const q=query(collection(db,'indents'),where('ownerUid','==',user.uid));
   const snap=await getDocs(q);
-  records=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(b.indentDate||'').localeCompare(String(a.indentDate||'')));
+  records=snap.docs.map(d=>({id:d.id,...d.data()}))
+   .sort((a,b)=>String(b.indentDate||'').localeCompare(String(a.indentDate||'')));
   render();
- }catch(e){showMsg('Could not load records: '+e.message,'error')}
+ }catch(e){message('Could not load records: '+e.message,true)}
 }
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+async function loadSettings(){
+ try{
+  const ref=doc(db,'userSettings',user.uid);
+  const snap=await getDoc(ref);
+  const data=snap.exists()?snap.data():{};
+  transporters=Array.isArray(data.transporters)?data.transporters:[];
+  ccEmails=String(data.ccEmails||'');
+  $('ccemails').value=ccEmails;
+  renderMaster();
+ }catch(e){message('Settings load error: '+e.message,true)}
+}
+async function saveSettings(){
+ await setDoc(doc(db,'userSettings',user.uid),{
+  ownerUid:user.uid,transporters,ccEmails,updatedAt:serverTimestamp()
+ },{merge:true});
+ renderMaster();
+}
+function renderMaster(){
+ $('transporter').innerHTML='<option value="">Select transporter</option>'+
+  transporters.map((t,i)=>`<option value="${i}">${esc(t.name)}</option>`).join('');
+ $('masterList').innerHTML=transporters.map((t,i)=>`
+  <div style="border-bottom:1px solid #ddd;padding:9px">
+   <b>${esc(t.name)}</b><br><span class="small">${esc(t.emails.join(', '))}</span>
+   <button data-remove="${i}" class="danger">Delete</button>
+  </div>`).join('');
+ document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=async()=>{
+  if(!confirm('Delete this transporter from the master?'))return;
+  transporters.splice(Number(b.dataset.remove),1);
+  try{await saveSettings();message('Transporter deleted.')}
+  catch(e){message(e.message,true)}
+ });
+}
+$('addTransporter').onclick=async()=>{
+ const name=$('tname').value.trim(),list=emails($('temails').value);
+ if(!name||!list.length){message('Enter a transporter name and at least one valid email.',true);return}
+ const idx=transporters.findIndex(t=>t.name.toLowerCase()===name.toLowerCase());
+ const item={name,emails:list};
+ if(idx>=0)transporters[idx]=item;else transporters.push(item);
+ try{
+  await saveSettings();$('tname').value='';$('temails').value='';
+  message('Transporter saved.');
+ }catch(e){message('Save failed: '+e.message,true)}
+};
+$('saveCC').onclick=async()=>{
+ ccEmails=emails($('ccemails').value).join(', ');
+ $('ccemails').value=ccEmails;
+ try{await saveSettings();message('CC IDs saved.')}
+ catch(e){message(e.message,true)}
+};
+$('transporter').onchange=()=>{
+ const t=transporters[Number($('transporter').value)];
+ // Keep existing text when editing a historical transporter not in master.
+ if(t)$('transporter').dataset.name=t.name;
+};
+
 function render(){
- const m=$('monthFilter').value;
+ const m=$('month').value;
  const mr=records.filter(r=>(r.indentDate||'').slice(0,7)===m);
- $('mTotal').textContent=mr.length;
- $('mPlaced').textContent=records.filter(r=>(r.placedAt||'').slice(0,7)===m).length;
- $('mReceived').textContent=mr.filter(r=>r.status==='Received').length;
- $('mCancelled').textContent=mr.filter(r=>r.status==='Cancelled').length;
- const loc={};
- records.filter(r=>(r.placedAt||'').slice(0,7)===m).forEach(r=>{const k=r.location||'Not specified';loc[k]=(loc[k]||0)+1});
- const ls=Object.entries(loc).sort((a,b)=>b[1]-a[1]),max=Math.max(1,...ls.map(x=>x[1]));
- $('locationChart').className=ls.length?'':'empty';
- $('locationChart').innerHTML=ls.length?ls.map(([n,v])=>`<div class="locationrow"><strong>${esc(n)}</strong><div class="bar"><span style="width:${v/max*100}%"></span></div><strong>${v}</strong></div>`).join(''):'No placements for this month yet.';
+ $('total').textContent=mr.length;
+ $('placed').textContent=mr.filter(r=>r.status==='Placed').length;
+ $('received').textContent=mr.filter(r=>r.status==='Received').length;
+ $('cancelled').textContent=mr.filter(r=>r.status==='Cancelled').length;
  const s=$('search').value.toLowerCase();
- const rows=records.filter(r=>[r.location,r.transporter,r.vehicleNumber,r.status].join(' ').toLowerCase().includes(s));
- $('recordsBody').innerHTML=rows.map(r=>`<tr>
- <td>${esc(r.indentDate||'—')}</td><td>${esc(r.location||'—')}</td><td>${esc(r.transporter||'—')}</td>
- <td>${esc(r.vehicleNumber||'—')}<br>${esc(r.vehicleType||'')}</td><td>${esc(r.requiredDate||'—')}</td>
- <td>${esc(r.quantity??'—')}</td><td><span class="status s-${esc(r.status||'Pending')}">${esc(r.status||'Pending')}</span></td>
- <td><div class="actions">
- <select class="statusSelect" data-id="${r.id}" aria-label="Change status" style="width:105px;padding:5px;font-size:11px">
- ${['Pending','Placed','Received','Cancelled'].map(x=>`<option ${r.status===x?'selected':''}>${x}</option>`).join('')}
- </select>
- <button class="secondary small editBtn" data-id="${r.id}">Edit</button>
- <button class="secondary small historyBtn" data-id="${r.id}">History</button>
- </div></td></tr>`).join('');
- $('recordsEmpty').classList.toggle('hidden',rows.length>0);
- document.querySelectorAll('.statusSelect').forEach(e=>e.onchange=()=>changeStatus(e.dataset.id,e.value));
- document.querySelectorAll('.editBtn').forEach(e=>e.onclick=()=>editRecord(e.dataset.id));
- document.querySelectorAll('.historyBtn').forEach(e=>e.onclick=()=>showHistory(e.dataset.id));
+ const rows=records.filter(r=>[
+  r.location,r.transporter,r.vehicleNumber,r.status
+ ].join(' ').toLowerCase().includes(s));
+ $('rows').innerHTML=rows.map(r=>`
+ <tr>
+ <td><input type="checkbox" data-pick="${r.id}" ${selected.has(r.id)?'checked':''}></td>
+ <td>${esc(r.indentDate)}</td><td>${esc(r.location)}</td>
+ <td>${esc(r.transporter)}</td>
+ <td>${esc(r.vehicleNumber)}<br>${esc(r.vehicleType)}</td>
+ <td>${esc(r.requiredDate)}</td><td>${esc(r.quantity)}</td>
+ <td><select data-status="${r.id}">
+ ${['Pending','Placed','Received','Cancelled'].map(x=>
+ `<option ${x===(r.status||'Pending')?'selected':''}>${x}</option>`).join('')}
+ </select></td>
+ <td><button data-edit="${r.id}">Edit</button>
+ <button data-history="${r.id}">History</button></td>
+ </tr>`).join('');
+
+ document.querySelectorAll('[data-pick]').forEach(b=>b.onchange=()=>{
+  b.checked?selected.add(b.dataset.pick):selected.delete(b.dataset.pick);
+ });
+ document.querySelectorAll('[data-status]').forEach(b=>b.onchange=()=>changeStatus(b.dataset.status,b.value));
+ document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>edit(b.dataset.edit));
+ document.querySelectorAll('[data-history]').forEach(b=>b.onclick=()=>history(b.dataset.history));
 }
+
 async function changeStatus(id,status){
  const r=records.find(x=>x.id===id);if(!r)return;
- if(status==='Cancelled'&&!confirm('Cancel this vehicle indent?')){render();return}
+ if(status==='Cancelled'&&!confirm('Cancel this indent?')){render();return}
  try{
-  const history=[...(r.history||[]),{from:r.status||'Pending',to:status,at:new Date().toISOString()}];
-  const update={status,history,updatedAt:serverTimestamp()};
+  const hist=[...(r.history||[]),{from:r.status||'Pending',to:status,at:new Date().toISOString()}];
+  const update={status,history:hist,updatedAt:serverTimestamp()};
   if(status==='Placed'&&!r.placedAt)update.placedAt=today();
   await updateDoc(doc(db,'indents',id),update);
-  showMsg('Status updated.','good');await loadRecords();
- }catch(e){showMsg('Could not update status: '+e.message,'error')}
+  await loadRecords();message('Status updated.');
+ }catch(e){message('Status update failed: '+e.message,true)}
 }
-function editRecord(id){
+function edit(id){
  const r=records.find(x=>x.id===id);if(!r)return;
  $('editId').value=id;
- ['indentDate','location','transporter','vehicleType','vehicleNumber','requiredDate','quantity','status','remarks'].forEach(k=>$(k).value=r[k]??'');
- $('formTitle').textContent='Edit vehicle indent';switchTab('new');
+ for(const k of ['indentDate','location','vehicleType','vehicleNumber','requiredDate','quantity','status','remarks'])
+  $(k).value=r[k]??'';
+ $('transporter').value='';
+ $('transporter').dataset.name=r.transporter||'';
+ $('formTitle').textContent='Edit Indent';
+ tab('new');
 }
-function showHistory(id){
- const r=records.find(x=>x.id===id);if(!r)return;
- const h=r.history||[];
- $('historyArea').innerHTML=`<strong>${esc(r.location||'Indent')} · ${esc(r.vehicleNumber||'No vehicle number')}</strong>`+
- (h.length?'<ul>'+h.slice().reverse().map(x=>`<li>${esc(x.from)} → <strong>${esc(x.to)}</strong> <span class="muted">${esc(new Date(x.at).toLocaleString())}</span></li>`).join('')+'</ul>':'<p>No status changes yet.</p>');
+function clearForm(){
+ $('form').reset();$('editId').value='';
+ $('indentDate').value=today();$('requiredDate').value=today();
+ $('status').value='Pending';$('formTitle').textContent='New Indent';
+ $('transporter').dataset.name='';
 }
-$('indentForm').onsubmit=async ev=>{
+$('clear').onclick=clearForm;
+$('form').onsubmit=async ev=>{
  ev.preventDefault();
  const id=$('editId').value;
- const data={ownerUid:user.uid,indentDate:$('indentDate').value,location:$('location').value.trim(),
- transporter:$('transporter').value.trim(),vehicleType:$('vehicleType').value,
- vehicleNumber:$('vehicleNumber').value.trim().toUpperCase(),requiredDate:$('requiredDate').value,
- quantity:$('quantity').value===''?null:Number($('quantity').value),status:$('status').value,remarks:$('remarks').value.trim()};
+ const idx=$('transporter').value;
+ const selectedTransporter=idx!==''?transporters[Number(idx)]?.name:'';
+ const transporter=selectedTransporter||$('transporter').dataset.name||'';
+ const data={
+  ownerUid:user.uid,indentDate:$('indentDate').value,
+  location:$('location').value.trim(),transporter,
+  vehicleType:$('vehicleType').value,
+  vehicleNumber:$('vehicleNumber').value.trim().toUpperCase(),
+  requiredDate:$('requiredDate').value,
+  quantity:$('quantity').value===''?null:Number($('quantity').value),
+  status:$('status').value,remarks:$('remarks').value.trim()
+ };
  try{
   if(id){
    const old=records.find(x=>x.id===id);
-   const history=[...(old.history||[])];
-   if(old.status!==data.status)history.push({from:old.status||'Pending',to:data.status,at:new Date().toISOString()});
-   const update={...data,history,updatedAt:serverTimestamp()};
-   if(data.status==='Placed'&&!old.placedAt)update.placedAt=today();else if(old.placedAt)update.placedAt=old.placedAt;
-   await updateDoc(doc(db,'indents',id),update);showMsg('Indent updated.','good');
+   const hist=[...(old.history||[])];
+   if(old.status!==data.status)hist.push({from:old.status||'Pending',to:data.status,at:new Date().toISOString()});
+   const upd={...data,history:hist,updatedAt:serverTimestamp()};
+   if(data.status==='Placed'&&!old.placedAt)upd.placedAt=today();
+   else if(old.placedAt)upd.placedAt=old.placedAt;
+   await updateDoc(doc(db,'indents',id),upd);
   }else{
-   const item={...data,history:[{from:'New',to:data.status,at:new Date().toISOString()}],
-    createdAt:serverTimestamp(),placedAt:data.status==='Placed'?today():null};
-   await addDoc(collection(db,'indents'),item);showMsg('Indent saved to cloud.','good');
+   await addDoc(collection(db,'indents'),{
+    ...data,history:[{from:'New',to:data.status,at:new Date().toISOString()}],
+    createdAt:serverTimestamp(),placedAt:data.status==='Placed'?today():null
+   });
   }
-  clearForm();await loadRecords();switchTab('records');
- }catch(e){showMsg('Could not save: '+e.message,'error')}
+  clearForm();await loadRecords();tab('records');message('Indent saved.');
+ }catch(e){message('Save failed: '+e.message,true)}
 };
-function clearForm(){
- $('indentForm').reset();$('editId').value='';$('indentDate').value=today();$('requiredDate').value=today();
- $('formTitle').textContent='Create vehicle indent';$('status').value='Pending';
+function history(id){
+ const r=records.find(x=>x.id===id);if(!r)return;
+ $('history').textContent=(r.history||[]).map(h=>
+  `${h.from} → ${h.to} (${new Date(h.at).toLocaleString()})`).join(' | ')||'No history';
 }
-$('cancelEditBtn').onclick=clearForm;
-function switchTab(t){
- document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
- $('recordsPanel').classList.toggle('hidden',t!=='records');
- $('newPanel').classList.toggle('hidden',t!=='new');
-}
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{if(b.dataset.tab==='new')clearForm();switchTab(b.dataset.tab)});
-$('monthFilter').onchange=render;
+
+$('mail').onclick=()=>{
+ const chosen=records.filter(r=>selected.has(r.id));
+ if(!chosen.length){message('Select at least one record first.',true);return}
+ const names=[...new Set(chosen.map(r=>r.transporter).filter(Boolean))];
+ if(names.length!==1){message('Select records for one transporter per email.',true);return}
+ const t=transporters.find(x=>x.name===names[0]);
+ const to=t?.emails||[];
+ if(!to.length){message('Add this transporter and its email IDs in Transporter Master first.',true);tab('master');return}
+ const subject=encodeURIComponent('Vehicle Indent – '+names[0]);
+ const body=encodeURIComponent(
+  'Dear Team,\n\nPlease arrange vehicles for the following indents:\n\n'+
+  chosen.map((r,i)=>`${i+1}. Location: ${r.location}; Required date: ${r.requiredDate}; Vehicle: ${r.vehicleType||'-'}; Quantity: ${r.quantity??'-'} MT; Status: ${r.status||'Pending'}`).join('\n')+
+  '\n\nPlease confirm vehicle placement.\n\nRegards'
+ );
+ const url='mailto:'+encodeURIComponent(to.join(','))+
+  '?cc='+encodeURIComponent(emails(ccEmails).join(','))+
+  '&subject='+subject+'&body='+body;
+ if(url.length>1800){
+  message('Email is too long for a reliable mailto draft. Select fewer records.',true);return;
+ }
+ window.location.href=url;
+};
+
+$('month').onchange=render;
 $('search').oninput=render;
+
+$('export').onclick=async()=>{
+ const from=$('fromDate').value,to=$('toDate').value;
+ if(!from||!to||from>to){message('Select a valid From and To date.',true);return}
+ const status=$('reportStatus').value;
+ const data=records.filter(r=>(r.indentDate||'')>=from&&(r.indentDate||'')<=to&&
+  (status==='All'||(r.status||'Pending')===status));
+ if(!data.length){message('No records found for this date range.',true);return}
+ try{
+  const XLSX=await import('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm');
+  const rows=data.map(r=>({
+   'Indent Date':r.indentDate||'','Location':r.location||'',
+   'Transporter':r.transporter||'','Vehicle Type':r.vehicleType||'',
+   'Vehicle Number':r.vehicleNumber||'','Required Date':r.requiredDate||'',
+   'Quantity MT':r.quantity??'','Status':r.status||'Pending',
+   'Remarks':r.remarks||'','Placed Date':r.placedAt||''
+  }));
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Indent Report');
+  XLSX.writeFile(wb,`Vehicle_Indent_${from}_to_${to}.xlsx`);
+  message(`Excel exported: ${data.length} records.`);
+ }catch(e){message('Excel export failed: '+e.message,true)}
+};
 </script>
 </body>
 </html>
