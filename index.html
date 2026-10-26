@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Vehicle Indent Manager</title>
 <style>
-:root{--g:#123c35;--bg:#f3f6f5;--line:#dfe8e4}
+:root{--g:#123c35;--bg:#f3f6f5;--line:#dfe8e4;--blue:#17365d}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:#172923;font:14px Arial,sans-serif}
 header{background:var(--g);color:white;padding:18px}
@@ -24,418 +24,465 @@ table{border-collapse:collapse;width:100%;min-width:850px}
 th,td{text-align:left;padding:9px;border-bottom:1px solid #e2e9e5}
 .wrap{overflow:auto}
 .small{font-size:12px;color:#64736c}
-#msg{padding:10px;background:#fff1cf;margin:8px 0;overflow-wrap:anywhere}
+#msg{padding:10px;background:#fff1cf;margin:8px 0;overflow-wrap:anywhere;border-radius:7px}
+@media(max-width:600px){header{padding:14px}header h2{font-size:21px}.card{padding:11px}.tabs button{flex:1 1 42%}}
 </style>
 </head>
 <body>
 <header>
-  <h2>🚚 Vehicle Indent Manager</h2>
-  <div>Cloud records · Transporter Master · Reports</div>
+<h2>🚚 Vehicle Indent Manager</h2>
+<div>Cloud records · Transporter Master · Reports</div>
 </header>
-
 <main>
 <section id="auth" class="card">
-  <h3>Login / Register</h3>
-  <input id="email" type="email" placeholder="Login email">
-  <input id="password" type="password" placeholder="Password">
-  <button class="primary" id="login">Login</button>
-  <button id="register">Create account</button>
+<h3>Login / Register</h3>
+<input id="email" type="email" placeholder="Login email">
+<input id="password" type="password" placeholder="Password">
+<button class="primary" id="login">Login</button>
+<button id="register">Create account</button>
 </section>
 
 <section id="app" class="hidden">
-  <div id="msg" class="hidden"></div>
-  <button id="logout">Log out</button>
+<div id="msg" class="hidden"></div>
+<button id="logout">Log out</button>
 
-  <div class="card">
-    <h3>Monthly Dashboard</h3>
-    <input id="month" type="month">
-    <div class="grid">
-      <div>Total indents: <b id="total">0</b></div>
-      <div>Placed: <b id="placed">0</b></div>
-      <div>Received: <b id="received">0</b></div>
-      <div>Cancelled: <b id="cancelled">0</b></div>
-    </div>
-  </div>
+<div class="card">
+<h3>Monthly Dashboard</h3>
+<input id="month" type="month">
+<div class="grid">
+<div>Total indents: <b id="total">0</b></div>
+<div>Placed: <b id="placed">0</b></div>
+<div>Received: <b id="received">0</b></div>
+<div>Cancelled: <b id="cancelled">0</b></div>
+</div>
+</div>
 
-  <div class="tabs">
-    <button data-tab="records">All Records</button>
-    <button data-tab="new">New Indent</button>
-    <button data-tab="master">Transporter Master</button>
-    <button data-tab="report">Excel Report</button>
-  </div>
+<div class="tabs">
+<button data-tab="records">All Records</button>
+<button data-tab="new">New Indent</button>
+<button data-tab="master">Transporter Master</button>
+<button data-tab="report">Excel Report</button>
+</div>
 
-  <section id="records" class="card">
-    <h3>Indent Records</h3>
-    <input id="search" placeholder="Search location, transporter, vehicle">
-    <p class="small">Select records for the email draft using the checkbox.</p>
-    <div class="wrap">
-      <table>
-        <thead><tr>
-          <th>Select</th><th>Indent Date</th><th>Location</th>
-          <th>Transporter</th><th>Vehicle</th><th>Required Date</th>
-          <th>MT</th><th>Status</th><th>Actions</th>
-        </tr></thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
-    <button class="primary" id="mail">Create Email Draft</button>
-    <div id="history" class="small"></div>
-  </section>
+<section id="records" class="card">
+<h3>Indent Records</h3>
+<input id="search" placeholder="Search location, transporter, vehicle">
+<p class="small">Select records for one transporter to create an email draft.</p>
+<div class="wrap">
+<table>
+<thead><tr>
+<th>Select</th><th>Indent Date</th><th>Location</th>
+<th>Transporter</th><th>Vehicle</th><th>Required Date</th>
+<th>Quantity (MT)</th><th>Status</th><th>Actions</th>
+</tr></thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+<button class="primary" id="mail">Create Email Draft</button>
+<button id="copyTable" class="hidden">Copy Formatted Table</button>
+<div id="history" class="small"></div>
+</section>
 
-  <section id="new" class="card hidden">
-    <h3 id="formTitle">New Indent</h3>
-    <form id="form">
-      <input id="editId" type="hidden">
-      <div class="grid">
-        <label>Indent Date<input id="indentDate" type="date" required></label>
-        <label>Location<input id="location" required></label>
-        <label>Transporter
-          <select id="transporter"><option value="">Select transporter</option></select>
-        </label>
-        <label>Vehicle Type
-          <select id="vehicleType">
-            <option>Truck</option><option>Trailer</option>
-            <option>Container</option><option>Tanker</option><option>Other</option>
-          </select>
-        </label>
-        <label>Vehicle Number<input id="vehicleNumber"></label>
-        <label>Required Date<input id="requiredDate" type="date" required></label>
-        <label>Quantity MT<input id="quantity" type="number" min="0" step=".01"></label>
-        <label>Status
-          <select id="status">
-            <option>Pending</option><option>Placed</option>
-            <option>Received</option><option>Cancelled</option>
-          </select>
-        </label>
-      </div>
-      <label>Remarks<textarea id="remarks"></textarea></label>
-      <button class="primary" type="submit">Save Indent</button>
-      <button type="button" id="clear">Clear</button>
-    </form>
-  </section>
+<section id="new" class="card hidden">
+<h3 id="formTitle">New Indent</h3>
+<form id="form">
+<input id="editId" type="hidden">
+<div class="grid">
+<label>Indent Date<input id="indentDate" type="date" required></label>
+<label>Location<input id="location" required></label>
+<label>Transporter<select id="transporter"><option value="">Select transporter</option></select></label>
+<label>Vehicle Type<select id="vehicleType">
+<option>Truck</option><option>Trailer</option><option>Container</option><option>Tanker</option><option>Other</option>
+</select></label>
+<label>Vehicle Number<input id="vehicleNumber"></label>
+<label>Required Date<input id="requiredDate" type="date" required></label>
+<label>Quantity (MT)<input id="quantity" type="number" min="0" step=".01"></label>
+<label>Status<select id="status">
+<option>Pending</option><option>Placed</option><option>Received</option><option>Cancelled</option>
+</select></label>
+</div>
+<label>Remarks<textarea id="remarks"></textarea></label>
+<button class="primary" type="submit">Save Indent</button>
+<button type="button" id="clear">Clear</button>
+</form>
+</section>
 
-  <section id="master" class="card hidden">
-    <h3>Transporter Master</h3>
-    <p class="small">Each transporter can have multiple To email IDs. CC IDs are shared for your account.</p>
-    <label>Transporter Name<input id="tname" placeholder="Transporter name"></label>
-    <label>To email IDs<input id="temails" placeholder="email1@company.com, email2@company.com"></label>
-    <button class="primary" id="addTransporter">Save Transporter</button>
-    <div id="masterList"></div>
-    <hr>
-    <label>Common CC email IDs<textarea id="ccemails" placeholder="cc1@company.com, cc2@company.com"></textarea></label>
-    <button class="primary" id="saveCC">Save CC IDs</button>
-  </section>
+<section id="master" class="card hidden">
+<h3>Transporter Master</h3>
+<p class="small">Each transporter can have multiple To email IDs. CC IDs are shared for your account.</p>
+<label>Transporter Name<input id="tname" placeholder="Transporter name"></label>
+<label>To email IDs<input id="temails" placeholder="email1@company.com, email2@company.com"></label>
+<button class="primary" id="addTransporter">Save Transporter</button>
+<div id="masterList"></div>
+<hr>
+<label>Common CC email IDs<textarea id="ccemails" placeholder="cc1@company.com, cc2@company.com"></textarea></label>
+<button class="primary" id="saveCC">Save CC IDs</button>
+</section>
 
-  <section id="report" class="card hidden">
-    <h3>Date Range Excel Report</h3>
-    <label>From date<input id="fromDate" type="date"></label>
-    <label>To date<input id="toDate" type="date"></label>
-    <label>Status
-      <select id="reportStatus">
-        <option value="All">All statuses</option>
-        <option>Pending</option><option>Placed</option>
-        <option>Received</option><option>Cancelled</option>
-      </select>
-    </label>
-    <button class="primary" id="export">Download Excel (.xlsx)</button>
-    <p class="small">Date filtering uses the Indent Date. All four statuses are included when All statuses is selected.</p>
-  </section>
+<section id="report" class="card hidden">
+<h3>Date Range Excel Report</h3>
+<label>From date<input id="fromDate" type="date"></label>
+<label>To date<input id="toDate" type="date"></label>
+<label>Status<select id="reportStatus">
+<option value="All">All statuses</option><option>Pending</option>
+<option>Placed</option><option>Received</option><option>Cancelled</option>
+</select></label>
+<button class="primary" id="export">Download Excel (.xlsx)</button>
+<p class="small">Date filtering uses the Indent Date.</p>
+</section>
 </section>
 </main>
 
 <script type="module">
-import {initializeApp}
- from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {
- getAuth,onAuthStateChanged,signInWithEmailAndPassword,
- createUserWithEmailAndPassword,signOut
+getAuth,onAuthStateChanged,signInWithEmailAndPassword,
+createUserWithEmailAndPassword,signOut
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
- getFirestore,collection,addDoc,getDocs,doc,updateDoc,
- setDoc,getDoc,serverTimestamp,query,where
+getFirestore,collection,addDoc,getDocs,doc,updateDoc,
+setDoc,getDoc,serverTimestamp,query,where
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const firebaseConfig={
- apiKey:"AIzaSyCY-ixYqis-9p_AtbAdPSzFE6SCQmmYEN4",
- authDomain:"vehicle-indent-placement.firebaseapp.com",
- projectId:"vehicle-indent-placement",
- storageBucket:"vehicle-indent-placement.firebasestorage.app",
- messagingSenderId:"732813340242",
- appId:"1:732813340242:web:e58cb2825378992b73b98b",
- measurementId:"G-0S5TZS0DMQ"
+apiKey:"AIzaSyCY-ixYqis-9p_AtbAdPSzFE6SCQmmYEN4",
+authDomain:"vehicle-indent-placement.firebaseapp.com",
+projectId:"vehicle-indent-placement",
+storageBucket:"vehicle-indent-placement.firebasestorage.app",
+messagingSenderId:"732813340242",
+appId:"1:732813340242:web:e58cb2825378992b73b98b",
+measurementId:"G-0S5TZS0DMQ"
 };
 
 const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
+const auth=getAuth(app),db=getFirestore(app);
 const $=id=>document.getElementById(id);
 let user=null,records=[],transporters=[],ccEmails='',selected=new Set();
+let pendingHtml='',pendingPlain='';
 
-const today=()=>{
- const d=new Date();
- d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
- return d.toISOString().slice(0,10);
-};
+function today(){
+const d=new Date();
+d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
+return d.toISOString().slice(0,10);
+}
 $('month').value=today().slice(0,7);
 $('indentDate').value=today();
 $('requiredDate').value=today();
 
 function message(s,error=false){
- $('msg').textContent=s;
- $('msg').className=error?'':'good';
- $('msg').style.background=error?'#ffe9e9':'#e5f6eb';
- $('msg').classList.remove('hidden');
+$('msg').textContent=s;
+$('msg').style.background=error?'#ffe9e9':'#e5f6eb';
+$('msg').classList.remove('hidden');
 }
 function esc(s){
- return String(s??'').replace(/[&<>"']/g,c=>({
- '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
- }[c]));
+return String(s??'').replace(/[&<>"']/g,c=>({
+'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[c]));
 }
 function emails(s){
- return [...new Set(String(s||'').split(/[;,\s]+/)
-  .map(x=>x.trim()).filter(x=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x)))];
+return [...new Set(String(s||'').split(/[;,\s]+/)
+.map(x=>x.trim()).filter(x=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x)))];
 }
 function tab(id){
- for(const x of ['records','new','master','report'])
-  $(x).classList.toggle('hidden',x!==id);
- document.querySelectorAll('[data-tab]').forEach(b=>
-  b.style.background=b.dataset.tab===id?'#123c35':'#e7f0eb');
+for(const x of ['records','new','master','report'])
+$(x).classList.toggle('hidden',x!==id);
+document.querySelectorAll('[data-tab]').forEach(b=>{
+const active=b.dataset.tab===id;
+b.style.background=active?'#123c35':'#e7f0eb';
+b.style.color=active?'white':'#123c35';
+});
 }
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
 
 $('login').onclick=async()=>{
- try{await signInWithEmailAndPassword(auth,$('email').value.trim(),$('password').value)}
- catch(e){message(e.message,true)}
+try{await signInWithEmailAndPassword(auth,$('email').value.trim(),$('password').value)}
+catch(e){message(e.message,true)}
 };
 $('register').onclick=async()=>{
- try{await createUserWithEmailAndPassword(auth,$('email').value.trim(),$('password').value)}
- catch(e){message(e.message,true)}
+try{await createUserWithEmailAndPassword(auth,$('email').value.trim(),$('password').value)}
+catch(e){message(e.message,true)}
 };
 $('logout').onclick=()=>signOut(auth);
 
 onAuthStateChanged(auth,async u=>{
- user=u;
- $('auth').classList.toggle('hidden',!!u);
- $('app').classList.toggle('hidden',!u);
- if(u){
-  await loadSettings();
-  await loadRecords();
- }
+user=u;
+$('auth').classList.toggle('hidden',!!u);
+$('app').classList.toggle('hidden',!u);
+if(u){await loadSettings();await loadRecords();}
 });
 
 async function loadRecords(){
- try{
-  const q=query(collection(db,'indents'),where('ownerUid','==',user.uid));
-  const snap=await getDocs(q);
-  records=snap.docs.map(d=>({id:d.id,...d.data()}))
-   .sort((a,b)=>String(b.indentDate||'').localeCompare(String(a.indentDate||'')));
-  render();
- }catch(e){message('Could not load records: '+e.message,true)}
+try{
+const q=query(collection(db,'indents'),where('ownerUid','==',user.uid));
+const snap=await getDocs(q);
+records=snap.docs.map(d=>({id:d.id,...d.data()}))
+.sort((a,b)=>String(b.indentDate||'').localeCompare(String(a.indentDate||'')));
+render();
+}catch(e){message('Could not load records: '+e.message,true)}
 }
-
 async function loadSettings(){
- try{
-  const ref=doc(db,'userSettings',user.uid);
-  const snap=await getDoc(ref);
-  const data=snap.exists()?snap.data():{};
-  transporters=Array.isArray(data.transporters)?data.transporters:[];
-  ccEmails=String(data.ccEmails||'');
-  $('ccemails').value=ccEmails;
-  renderMaster();
- }catch(e){message('Settings load error: '+e.message,true)}
+try{
+const snap=await getDoc(doc(db,'userSettings',user.uid));
+const data=snap.exists()?snap.data():{};
+transporters=Array.isArray(data.transporters)?data.transporters:[];
+ccEmails=String(data.ccEmails||'');
+$('ccemails').value=ccEmails;
+renderMaster();
+}catch(e){message('Settings load error: '+e.message,true)}
 }
 async function saveSettings(){
- await setDoc(doc(db,'userSettings',user.uid),{
-  ownerUid:user.uid,transporters,ccEmails,updatedAt:serverTimestamp()
- },{merge:true});
- renderMaster();
+await setDoc(doc(db,'userSettings',user.uid),{
+ownerUid:user.uid,transporters,ccEmails,updatedAt:serverTimestamp()
+},{merge:true});
+renderMaster();
 }
 function renderMaster(){
- $('transporter').innerHTML='<option value="">Select transporter</option>'+
-  transporters.map((t,i)=>`<option value="${i}">${esc(t.name)}</option>`).join('');
- $('masterList').innerHTML=transporters.map((t,i)=>`
-  <div style="border-bottom:1px solid #ddd;padding:9px">
-   <b>${esc(t.name)}</b><br><span class="small">${esc(t.emails.join(', '))}</span>
-   <button data-remove="${i}" class="danger">Delete</button>
-  </div>`).join('');
- document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=async()=>{
-  if(!confirm('Delete this transporter from the master?'))return;
-  transporters.splice(Number(b.dataset.remove),1);
-  try{await saveSettings();message('Transporter deleted.')}
-  catch(e){message(e.message,true)}
- });
+$('transporter').innerHTML='<option value="">Select transporter</option>'+
+transporters.map((t,i)=>`<option value="${i}">${esc(t.name)}</option>`).join('');
+$('masterList').innerHTML=transporters.map((t,i)=>`
+<div style="border-bottom:1px solid #ddd;padding:9px">
+<b>${esc(t.name)}</b><br>
+<span class="small">${esc((t.emails||[]).join(', '))}</span>
+<button data-remove="${i}" class="danger">Delete</button>
+</div>`).join('');
+document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=async()=>{
+if(!confirm('Delete this transporter from the master?'))return;
+transporters.splice(Number(b.dataset.remove),1);
+try{await saveSettings();message('Transporter deleted.')}
+catch(e){message(e.message,true)}
+});
 }
 $('addTransporter').onclick=async()=>{
- const name=$('tname').value.trim(),list=emails($('temails').value);
- if(!name||!list.length){message('Enter a transporter name and at least one valid email.',true);return}
- const idx=transporters.findIndex(t=>t.name.toLowerCase()===name.toLowerCase());
- const item={name,emails:list};
- if(idx>=0)transporters[idx]=item;else transporters.push(item);
- try{
-  await saveSettings();$('tname').value='';$('temails').value='';
-  message('Transporter saved.');
- }catch(e){message('Save failed: '+e.message,true)}
+const name=$('tname').value.trim(),list=emails($('temails').value);
+if(!name||!list.length){message('Enter a transporter name and valid email.',true);return}
+const idx=transporters.findIndex(t=>t.name.toLowerCase()===name.toLowerCase());
+const item={name,emails:list};
+if(idx>=0)transporters[idx]=item;else transporters.push(item);
+try{
+await saveSettings();$('tname').value='';$('temails').value='';
+message('Transporter saved.');
+}catch(e){message('Save failed: '+e.message,true)}
 };
 $('saveCC').onclick=async()=>{
- ccEmails=emails($('ccemails').value).join(', ');
- $('ccemails').value=ccEmails;
- try{await saveSettings();message('CC IDs saved.')}
- catch(e){message(e.message,true)}
-};
-$('transporter').onchange=()=>{
- const t=transporters[Number($('transporter').value)];
- // Keep existing text when editing a historical transporter not in master.
- if(t)$('transporter').dataset.name=t.name;
+ccEmails=emails($('ccemails').value).join(', ');
+$('ccemails').value=ccEmails;
+try{await saveSettings();message('CC IDs saved.')}
+catch(e){message(e.message,true)}
 };
 
 function render(){
- const m=$('month').value;
- const mr=records.filter(r=>(r.indentDate||'').slice(0,7)===m);
- $('total').textContent=mr.length;
- $('placed').textContent=mr.filter(r=>r.status==='Placed').length;
- $('received').textContent=mr.filter(r=>r.status==='Received').length;
- $('cancelled').textContent=mr.filter(r=>r.status==='Cancelled').length;
- const s=$('search').value.toLowerCase();
- const rows=records.filter(r=>[
-  r.location,r.transporter,r.vehicleNumber,r.status
- ].join(' ').toLowerCase().includes(s));
- $('rows').innerHTML=rows.map(r=>`
- <tr>
- <td><input type="checkbox" data-pick="${r.id}" ${selected.has(r.id)?'checked':''}></td>
- <td>${esc(r.indentDate)}</td><td>${esc(r.location)}</td>
- <td>${esc(r.transporter)}</td>
- <td>${esc(r.vehicleNumber)}<br>${esc(r.vehicleType)}</td>
- <td>${esc(r.requiredDate)}</td><td>${esc(r.quantity)}</td>
- <td><select data-status="${r.id}">
- ${['Pending','Placed','Received','Cancelled'].map(x=>
- `<option ${x===(r.status||'Pending')?'selected':''}>${x}</option>`).join('')}
- </select></td>
- <td><button data-edit="${r.id}">Edit</button>
- <button data-history="${r.id}">History</button></td>
- </tr>`).join('');
-
- document.querySelectorAll('[data-pick]').forEach(b=>b.onchange=()=>{
-  b.checked?selected.add(b.dataset.pick):selected.delete(b.dataset.pick);
- });
- document.querySelectorAll('[data-status]').forEach(b=>b.onchange=()=>changeStatus(b.dataset.status,b.value));
- document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>edit(b.dataset.edit));
- document.querySelectorAll('[data-history]').forEach(b=>b.onclick=()=>history(b.dataset.history));
+const m=$('month').value;
+const mr=records.filter(r=>(r.indentDate||'').slice(0,7)===m);
+$('total').textContent=mr.length;
+$('placed').textContent=mr.filter(r=>r.status==='Placed').length;
+$('received').textContent=mr.filter(r=>r.status==='Received').length;
+$('cancelled').textContent=mr.filter(r=>r.status==='Cancelled').length;
+const s=$('search').value.toLowerCase();
+const rows=records.filter(r=>[r.location,r.transporter,r.vehicleNumber,r.status]
+.join(' ').toLowerCase().includes(s));
+$('rows').innerHTML=rows.map(r=>`
+<tr>
+<td><input type="checkbox" data-pick="${r.id}" ${selected.has(r.id)?'checked':''}></td>
+<td>${esc(r.indentDate)}</td><td>${esc(r.location)}</td>
+<td>${esc(r.transporter)}</td>
+<td>${esc(r.vehicleNumber)}<br>${esc(r.vehicleType)}</td>
+<td>${esc(r.requiredDate)}</td><td>${esc(r.quantity??'')} MT</td>
+<td><select data-status="${r.id}">
+${['Pending','Placed','Received','Cancelled'].map(x=>
+`<option ${x===(r.status||'Pending')?'selected':''}>${x}</option>`).join('')}
+</select></td>
+<td><button data-edit="${r.id}">Edit</button>
+<button data-history="${r.id}">History</button></td>
+</tr>`).join('');
+document.querySelectorAll('[data-pick]').forEach(b=>b.onchange=()=>{
+b.checked?selected.add(b.dataset.pick):selected.delete(b.dataset.pick);
+});
+document.querySelectorAll('[data-status]').forEach(b=>b.onchange=()=>changeStatus(b.dataset.status,b.value));
+document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>edit(b.dataset.edit));
+document.querySelectorAll('[data-history]').forEach(b=>b.onclick=()=>showHistory(b.dataset.history));
 }
-
 async function changeStatus(id,status){
- const r=records.find(x=>x.id===id);if(!r)return;
- if(status==='Cancelled'&&!confirm('Cancel this indent?')){render();return}
- try{
-  const hist=[...(r.history||[]),{from:r.status||'Pending',to:status,at:new Date().toISOString()}];
-  const update={status,history:hist,updatedAt:serverTimestamp()};
-  if(status==='Placed'&&!r.placedAt)update.placedAt=today();
-  await updateDoc(doc(db,'indents',id),update);
-  await loadRecords();message('Status updated.');
- }catch(e){message('Status update failed: '+e.message,true)}
+const r=records.find(x=>x.id===id);if(!r)return;
+if(status==='Cancelled'&&!confirm('Cancel this indent?')){render();return}
+try{
+const hist=[...(r.history||[]),{from:r.status||'Pending',to:status,at:new Date().toISOString()}];
+const update={status,history:hist,updatedAt:serverTimestamp()};
+if(status==='Placed'&&!r.placedAt)update.placedAt=today();
+await updateDoc(doc(db,'indents',id),update);
+await loadRecords();message('Status updated.');
+}catch(e){message('Status update failed: '+e.message,true)}
 }
 function edit(id){
- const r=records.find(x=>x.id===id);if(!r)return;
- $('editId').value=id;
- for(const k of ['indentDate','location','vehicleType','vehicleNumber','requiredDate','quantity','status','remarks'])
-  $(k).value=r[k]??'';
- $('transporter').value='';
- $('transporter').dataset.name=r.transporter||'';
- $('formTitle').textContent='Edit Indent';
- tab('new');
+const r=records.find(x=>x.id===id);if(!r)return;
+$('editId').value=id;
+for(const k of ['indentDate','location','vehicleType','vehicleNumber','requiredDate','quantity','status','remarks'])
+$(k).value=r[k]??'';
+$('transporter').value='';
+$('transporter').dataset.name=r.transporter||'';
+$('formTitle').textContent='Edit Indent';
+tab('new');
 }
 function clearForm(){
- $('form').reset();$('editId').value='';
- $('indentDate').value=today();$('requiredDate').value=today();
- $('status').value='Pending';$('formTitle').textContent='New Indent';
- $('transporter').dataset.name='';
+$('form').reset();$('editId').value='';
+$('indentDate').value=today();$('requiredDate').value=today();
+$('status').value='Pending';$('formTitle').textContent='New Indent';
+$('transporter').dataset.name='';
 }
 $('clear').onclick=clearForm;
+
 $('form').onsubmit=async ev=>{
- ev.preventDefault();
- const id=$('editId').value;
- const idx=$('transporter').value;
- const selectedTransporter=idx!==''?transporters[Number(idx)]?.name:'';
- const transporter=selectedTransporter||$('transporter').dataset.name||'';
- const data={
-  ownerUid:user.uid,indentDate:$('indentDate').value,
-  location:$('location').value.trim(),transporter,
-  vehicleType:$('vehicleType').value,
-  vehicleNumber:$('vehicleNumber').value.trim().toUpperCase(),
-  requiredDate:$('requiredDate').value,
-  quantity:$('quantity').value===''?null:Number($('quantity').value),
-  status:$('status').value,remarks:$('remarks').value.trim()
- };
- try{
-  if(id){
-   const old=records.find(x=>x.id===id);
-   const hist=[...(old.history||[])];
-   if(old.status!==data.status)hist.push({from:old.status||'Pending',to:data.status,at:new Date().toISOString()});
-   const upd={...data,history:hist,updatedAt:serverTimestamp()};
-   if(data.status==='Placed'&&!old.placedAt)upd.placedAt=today();
-   else if(old.placedAt)upd.placedAt=old.placedAt;
-   await updateDoc(doc(db,'indents',id),upd);
-  }else{
-   await addDoc(collection(db,'indents'),{
-    ...data,history:[{from:'New',to:data.status,at:new Date().toISOString()}],
-    createdAt:serverTimestamp(),placedAt:data.status==='Placed'?today():null
-   });
-  }
-  clearForm();await loadRecords();tab('records');message('Indent saved.');
- }catch(e){message('Save failed: '+e.message,true)}
+ev.preventDefault();
+const id=$('editId').value,idx=$('transporter').value;
+const selectedTransporter=idx!==''?transporters[Number(idx)]?.name:'';
+const transporter=selectedTransporter||$('transporter').dataset.name||'';
+const data={
+ownerUid:user.uid,indentDate:$('indentDate').value,
+location:$('location').value.trim(),transporter,
+vehicleType:$('vehicleType').value,
+vehicleNumber:$('vehicleNumber').value.trim().toUpperCase(),
+requiredDate:$('requiredDate').value,
+quantity:$('quantity').value===''?null:Number($('quantity').value),
+status:$('status').value,remarks:$('remarks').value.trim()
 };
-function history(id){
- const r=records.find(x=>x.id===id);if(!r)return;
- $('history').textContent=(r.history||[]).map(h=>
-  `${h.from} → ${h.to} (${new Date(h.at).toLocaleString()})`).join(' | ')||'No history';
+try{
+if(id){
+const old=records.find(x=>x.id===id),hist=[...(old.history||[])];
+if(old.status!==data.status)hist.push({from:old.status||'Pending',to:data.status,at:new Date().toISOString()});
+const upd={...data,history:hist,updatedAt:serverTimestamp()};
+if(data.status==='Placed'&&!old.placedAt)upd.placedAt=today();
+else if(old.placedAt)upd.placedAt=old.placedAt;
+await updateDoc(doc(db,'indents',id),upd);
+}else{
+await addDoc(collection(db,'indents'),{
+...data,history:[{from:'New',to:data.status,at:new Date().toISOString()}],
+createdAt:serverTimestamp(),placedAt:data.status==='Placed'?today():null
+});
+}
+clearForm();await loadRecords();tab('records');message('Indent saved.');
+}catch(e){message('Save failed: '+e.message,true)}
+};
+
+function showHistory(id){
+const r=records.find(x=>x.id===id);if(!r)return;
+$('history').textContent=(r.history||[]).map(h=>
+`${h.from} → ${h.to} (${new Date(h.at).toLocaleString()})`).join(' | ')||'No history';
+}
+function fmtDate(d){
+if(!d)return '-';
+const p=d.split('-');
+return p.length===3?`${p[2]}-${p[1]}-${p[0]}`:d;
 }
 
-$('mail').onclick=()=>{
- const chosen=records.filter(r=>selected.has(r.id));
- if(!chosen.length){message('Select at least one record first.',true);return}
- const names=[...new Set(chosen.map(r=>r.transporter).filter(Boolean))];
- if(names.length!==1){message('Select records for one transporter per email.',true);return}
- const t=transporters.find(x=>x.name===names[0]);
- const to=t?.emails||[];
- if(!to.length){message('Add this transporter and its email IDs in Transporter Master first.',true);tab('master');return}
- const subject=encodeURIComponent('Vehicle Indent – '+names[0]);
- const body=encodeURIComponent(
-  'Dear Team,\n\nPlease arrange vehicles for the following indents:\n\n'+
-  chosen.map((r,i)=>`${i+1}. Location: ${r.location}; Required date: ${r.requiredDate}; Vehicle: ${r.vehicleType||'-'}; Quantity: ${r.quantity??'-'} MT; Status: ${r.status||'Pending'}`).join('\n')+
-  '\n\nPlease confirm vehicle placement.\n\nRegards'
- );
- const url='mailto:'+encodeURIComponent(to.join(','))+
-  '?cc='+encodeURIComponent(emails(ccEmails).join(','))+
-  '&subject='+subject+'&body='+body;
- if(url.length>1800){
-  message('Email is too long for a reliable mailto draft. Select fewer records.',true);return;
- }
- window.location.href=url;
+function buildEmail(chosen){
+const total=chosen.reduce((s,r)=>s+(Number(r.quantity)||0),0);
+const rows=chosen.map((r,i)=>`
+<tr style="background:${i%2===0?'#f0f6ff':'#ffffff'}">
+<td style="padding:10px;border:1px solid #d6e2f0">${i+1}</td>
+<td style="padding:10px;border:1px solid #d6e2f0">${esc(r.location||'-')}</td>
+<td style="padding:10px;border:1px solid #d6e2f0">${esc(fmtDate(r.requiredDate))}</td>
+<td style="padding:10px;border:1px solid #d6e2f0">${esc(r.vehicleType||'-')}</td>
+<td style="padding:10px;border:1px solid #d6e2f0;text-align:right">${esc(r.quantity??'-')} MT</td>
+<td style="padding:10px;border:1px solid #d6e2f0">${esc(r.status||'Pending')}</td>
+</tr>`).join('');
+
+const html=`<div style="font-family:Arial,sans-serif;color:#203047">
+<div style="background:#17365d;color:white;padding:18px">
+<h2 style="margin:0;color:white">VEHICLE INDENT REQUEST</h2>
+<p style="margin:7px 0 0;color:white">Vehicle Placement Schedule</p>
+</div><div style="padding:16px">
+<p>Dear Team,</p>
+<p>Please arrange vehicles as per the following requirements:</p>
+<table style="border-collapse:collapse;width:100%;font-size:13px">
+<thead><tr style="background:#245a91;color:white">
+${['S.No.','Location','Required Date','Vehicle Type','Quantity (MT)','Status'].map(x=>
+`<th style="padding:10px;border:1px solid #d6e2f0;text-align:left;color:white">${x}</th>`).join('')}
+</tr></thead><tbody>${rows}</tbody>
+<tfoot><tr style="background:#dce9f7;font-weight:bold">
+<td colspan="4" style="padding:10px;border:1px solid #d6e2f0">Total Quantity</td>
+<td style="padding:10px;border:1px solid #d6e2f0;text-align:right">${total.toLocaleString('en-IN',{maximumFractionDigits:2})} MT</td>
+<td style="padding:10px;border:1px solid #d6e2f0"></td>
+</tr></tfoot></table>
+<p>Please confirm vehicle placement against the above schedule.</p><p>Regards</p>
+</div></div>`;
+
+const plain='Dear Team,\n\nPlease arrange vehicles as per the following requirements:\n\n'+
+chosen.map((r,i)=>`${i+1}. Location: ${r.location||'-'} | Required Date: ${fmtDate(r.requiredDate)} | Vehicle: ${r.vehicleType||'-'} | Quantity: ${r.quantity??'-'} MT | Status: ${r.status||'Pending'}`).join('\n')+
+`\n\nTotal Quantity: ${total} MT\n\nPlease confirm vehicle placement.\n\nRegards`;
+return {html,plain};
+}
+
+$('mail').onclick=async()=>{
+const chosen=records.filter(r=>selected.has(r.id));
+if(!chosen.length){message('Select at least one record first.',true);return}
+const names=[...new Set(chosen.map(r=>r.transporter).filter(Boolean))];
+if(names.length!==1){message('Select records for one transporter per email.',true);return}
+const t=transporters.find(x=>x.name===names[0]),to=t?.emails||[];
+if(!to.length){message('Add transporter email IDs in Transporter Master first.',true);tab('master');return}
+const {html,plain}=buildEmail(chosen);
+pendingHtml=html;pendingPlain=plain;
+$('copyTable').classList.remove('hidden');
+const subject='Vehicle Indent - '+names[0];
+const url='mailto:'+to.map(encodeURIComponent).join(',')+
+'?cc='+encodeURIComponent(emails(ccEmails).join(','))+
+'&subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(plain);
+try{
+if(navigator.clipboard?.write&&window.ClipboardItem){
+await navigator.clipboard.write([new ClipboardItem({
+'text/html':new Blob([html],{type:'text/html'}),
+'text/plain':new Blob([plain],{type:'text/plain'})
+})]);
+message('Formatted table copied. In Outlook, paste it into the email body.');
+}else{
+message('If automatic copy is unavailable, tap Copy Formatted Table to open the table page.');
+}
+window.location.href=url;
+}catch(e){
+message('Clipboard permission was unavailable. Open the email and use Copy Formatted Table.',true);
+window.location.href=url;
+}
+};
+
+$('copyTable').onclick=async()=>{
+try{
+if(navigator.clipboard?.write&&window.ClipboardItem){
+await navigator.clipboard.write([new ClipboardItem({
+'text/html':new Blob([pendingHtml],{type:'text/html'}),
+'text/plain':new Blob([pendingPlain],{type:'text/plain'})
+})]);
+message('Formatted table copied. Return to Outlook and paste into the email body.');
+}else{
+const w=window.open('','_blank');
+if(!w){message('Pop-up blocked. Allow pop-ups for this site and retry.',true);return}
+w.document.write(`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Email Table</title></head><body>${pendingHtml}<p>Press and hold the table to select and copy it, then paste into Outlook.</p></body></html>`);
+w.document.close();
+}
+}catch(e){message('Could not copy automatically. Try opening the table page and copying it manually.',true)}
 };
 
 $('month').onchange=render;
 $('search').oninput=render;
 
 $('export').onclick=async()=>{
- const from=$('fromDate').value,to=$('toDate').value;
- if(!from||!to||from>to){message('Select a valid From and To date.',true);return}
- const status=$('reportStatus').value;
- const data=records.filter(r=>(r.indentDate||'')>=from&&(r.indentDate||'')<=to&&
-  (status==='All'||(r.status||'Pending')===status));
- if(!data.length){message('No records found for this date range.',true);return}
- try{
-  const XLSX=await import('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm');
-  const rows=data.map(r=>({
-   'Indent Date':r.indentDate||'','Location':r.location||'',
-   'Transporter':r.transporter||'','Vehicle Type':r.vehicleType||'',
-   'Vehicle Number':r.vehicleNumber||'','Required Date':r.requiredDate||'',
-   'Quantity MT':r.quantity??'','Status':r.status||'Pending',
-   'Remarks':r.remarks||'','Placed Date':r.placedAt||''
-  }));
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Indent Report');
-  XLSX.writeFile(wb,`Vehicle_Indent_${from}_to_${to}.xlsx`);
-  message(`Excel exported: ${data.length} records.`);
- }catch(e){message('Excel export failed: '+e.message,true)}
+const from=$('fromDate').value,to=$('toDate').value;
+if(!from||!to||from>to){message('Select a valid From and To date.',true);return}
+const status=$('reportStatus').value;
+const data=records.filter(r=>(r.indentDate||'')>=from&&(r.indentDate||'')<=to&&
+(status==='All'||(r.status||'Pending')===status));
+if(!data.length){message('No records found for this date range.',true);return}
+try{
+const XLSX=await import('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/+esm');
+const rows=data.map(r=>({
+'Indent Date':r.indentDate||'','Location':r.location||'',
+'Transporter':r.transporter||'','Vehicle Type':r.vehicleType||'',
+'Vehicle Number':r.vehicleNumber||'','Required Date':r.requiredDate||'',
+'Quantity (MT)':r.quantity??'','Status':r.status||'Pending',
+'Remarks':r.remarks||'','Placed Date':r.placedAt||''
+}));
+const wb=XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Indent Report');
+XLSX.writeFile(wb,`Vehicle_Indent_${from}_to_${to}.xlsx`);
+message(`Excel exported: ${data.length} records.`);
+}catch(e){message('Excel export failed: '+e.message,true)}
 };
 </script>
 </body>
